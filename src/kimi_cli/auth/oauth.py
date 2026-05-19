@@ -21,7 +21,7 @@ import aiohttp
 import keyring
 from pydantic import SecretStr
 
-from kimi_cli.auth import KIMI_CODE_PLATFORM_ID
+from kimi_cli.auth import KIMI_CODE_PLATFORM_ID, AKSESA_PLATFORM_ID
 from kimi_cli.auth.platforms import (
     ModelInfo,
     get_platform_by_id,
@@ -49,7 +49,10 @@ if TYPE_CHECKING:
 
 KIMI_CODE_CLIENT_ID = "17e5f671-d194-4dfb-9706-5516cb48c098"
 KIMI_CODE_OAUTH_KEY = "oauth/kimi-code"
+AKSESA_CLIENT_ID = "aksesa-cli-v1"
+AKSESA_OAUTH_KEY = "oauth/aksesa"
 DEFAULT_OAUTH_HOST = "https://auth.kimi.com"
+AKSESA_OAUTH_HOST = "https://ai.codecircle.space"
 KEYRING_SERVICE = "kimi-code"
 REFRESH_INTERVAL_SECONDS = 60
 MIN_REFRESH_THRESHOLD_SECONDS = 300
@@ -178,8 +181,22 @@ class DeviceAuthorization:
     interval: int
 
 
-def _oauth_host() -> str:
+def _oauth_host(platform_id: str = KIMI_CODE_PLATFORM_ID) -> str:
+    if platform_id == AKSESA_PLATFORM_ID:
+        return os.getenv("AKSESA_OAUTH_HOST") or AKSESA_OAUTH_HOST
     return os.getenv("KIMI_CODE_OAUTH_HOST") or os.getenv("KIMI_OAUTH_HOST") or DEFAULT_OAUTH_HOST
+
+
+def _client_id(platform_id: str = KIMI_CODE_PLATFORM_ID) -> str:
+    if platform_id == AKSESA_PLATFORM_ID:
+        return AKSESA_CLIENT_ID
+    return KIMI_CODE_CLIENT_ID
+
+
+def _oauth_key(platform_id: str = KIMI_CODE_PLATFORM_ID) -> str:
+    if platform_id == AKSESA_PLATFORM_ID:
+        return AKSESA_OAUTH_KEY
+    return KIMI_CODE_OAUTH_KEY
 
 
 def _device_id_path() -> Path:
@@ -451,12 +468,12 @@ def delete_tokens(ref: OAuthRef) -> None:
     _delete_from_file(ref.key)
 
 
-async def request_device_authorization() -> DeviceAuthorization:
+async def request_device_authorization(platform_id: str = KIMI_CODE_PLATFORM_ID) -> DeviceAuthorization:
     async with (
         new_client_session() as session,
         session.post(
-            f"{_oauth_host().rstrip('/')}/api/oauth/device_authorization",
-            data={"client_id": KIMI_CODE_CLIENT_ID},
+            f"{_oauth_host(platform_id).rstrip('/')}/api/oauth/device_authorization",
+            data={"client_id": _client_id(platform_id)},
             headers=_common_headers(),
         ) as response,
     ):
@@ -474,14 +491,16 @@ async def request_device_authorization() -> DeviceAuthorization:
     )
 
 
-async def _request_device_token(auth: DeviceAuthorization) -> tuple[int, dict[str, Any]]:
+async def _request_device_token(
+    auth: DeviceAuthorization, platform_id: str = KIMI_CODE_PLATFORM_ID
+) -> tuple[int, dict[str, Any]]:
     try:
         async with (
             new_client_session() as session,
             session.post(
-                f"{_oauth_host().rstrip('/')}/api/oauth/token",
+                f"{_oauth_host(platform_id).rstrip('/')}/api/oauth/token",
                 data={
-                    "client_id": KIMI_CODE_CLIENT_ID,
+                    "client_id": _client_id(platform_id),
                     "device_code": auth.device_code,
                     "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
                 },
@@ -500,16 +519,21 @@ async def _request_device_token(auth: DeviceAuthorization) -> tuple[int, dict[st
     return status, data
 
 
-async def refresh_token(refresh_token: str, *, max_retries: int = 3) -> OAuthToken:
+async def refresh_token(
+    refresh_token: str,
+    platform_id: str = KIMI_CODE_PLATFORM_ID,
+    *,
+    max_retries: int = 3,
+) -> OAuthToken:
     last_exc: Exception | None = None
     for attempt in range(max_retries):
         try:
             async with (
                 new_client_session() as session,
                 session.post(
-                    f"{_oauth_host().rstrip('/')}/api/oauth/token",
+                    f"{_oauth_host(platform_id).rstrip('/')}/api/oauth/token",
                     data={
-                        "client_id": KIMI_CODE_CLIENT_ID,
+                        "client_id": _client_id(platform_id),
                         "grant_type": "refresh_token",
                         "refresh_token": refresh_token,
                     },
@@ -555,21 +579,23 @@ def _select_default_model_and_thinking(models: list[ModelInfo]) -> tuple[ModelIn
     return selected_model, thinking
 
 
-def _apply_kimi_code_config(
+def _apply_platform_config(
     config: Config,
     *,
+    platform_id: str,
+    provider_type: str,
     models: list[ModelInfo],
     selected_model: ModelInfo,
     thinking: bool,
     oauth_ref: OAuthRef,
 ) -> None:
-    platform = get_platform_by_id(KIMI_CODE_PLATFORM_ID)
+    platform = get_platform_by_id(platform_id)
     if platform is None:
-        raise OAuthError("Kimi Code platform not found.")
+        raise OAuthError(f"{platform_id} platform not found.")
 
     provider_key = managed_provider_key(platform.id)
     config.providers[provider_key] = LLMProvider(
-        type="kimi",
+        type=provider_type,
         base_url=platform.base_url,
         api_key=SecretStr(""),
         oauth=oauth_ref,
@@ -607,8 +633,13 @@ def _apply_kimi_code_config(
         )
 
 
-async def login_kimi_code(
-    config: Config, *, open_browser: bool = True
+async def _login_platform(
+    config: Config,
+    *,
+    platform_id: str,
+    provider_type: str,
+    oauth_key: str,
+    open_browser: bool = True,
 ) -> AsyncIterator[OAuthEvent]:
     if not config.is_from_default_location:
         yield OAuthEvent(
@@ -617,16 +648,16 @@ async def login_kimi_code(
         )
         return
 
-    platform = get_platform_by_id(KIMI_CODE_PLATFORM_ID)
+    platform = get_platform_by_id(platform_id)
     if platform is None:
-        yield OAuthEvent("error", "Kimi Code platform is unavailable.")
+        yield OAuthEvent("error", f"{platform_id} platform is unavailable.")
         return
 
     auth: DeviceAuthorization
     token: OAuthToken | None = None
     while True:
         try:
-            auth = await request_device_authorization()
+            auth = await request_device_authorization(platform_id)
         except Exception as exc:
             yield OAuthEvent("error", f"Login failed: {exc}")
             return
@@ -653,7 +684,7 @@ async def login_kimi_code(
         printed_wait = False
         try:
             while True:
-                status, data = await _request_device_token(auth)
+                status, data = await _request_device_token(auth, platform_id)
                 if status == 200 and "access_token" in data:
                     token = OAuthToken.from_response(data)
                     break
@@ -682,7 +713,7 @@ async def login_kimi_code(
 
     assert token is not None
 
-    oauth_ref = OAuthRef(storage="file", key=KIMI_CODE_OAUTH_KEY)
+    oauth_ref = OAuthRef(storage="file", key=oauth_key)
     oauth_ref = save_tokens(oauth_ref, token)
 
     try:
@@ -701,8 +732,10 @@ async def login_kimi_code(
         return
     selected_model, thinking = selection
 
-    _apply_kimi_code_config(
+    _apply_platform_config(
         config,
+        platform_id=platform_id,
+        provider_type=provider_type,
         models=models,
         selected_model=selected_model,
         thinking=thinking,
@@ -713,7 +746,38 @@ async def login_kimi_code(
     return
 
 
-async def logout_kimi_code(config: Config) -> AsyncIterator[OAuthEvent]:
+async def login_kimi_code(
+    config: Config, *, open_browser: bool = True
+) -> AsyncIterator[OAuthEvent]:
+    async for event in _login_platform(
+        config,
+        platform_id=KIMI_CODE_PLATFORM_ID,
+        provider_type="kimi",
+        oauth_key=KIMI_CODE_OAUTH_KEY,
+        open_browser=open_browser,
+    ):
+        yield event
+
+
+async def login_aksesa(
+    config: Config, *, open_browser: bool = True
+) -> AsyncIterator[OAuthEvent]:
+    async for event in _login_platform(
+        config,
+        platform_id=AKSESA_PLATFORM_ID,
+        provider_type="openai_legacy",
+        oauth_key=AKSESA_OAUTH_KEY,
+        open_browser=open_browser,
+    ):
+        yield event
+
+
+async def _logout_platform(
+    config: Config,
+    *,
+    platform_id: str,
+    oauth_key: str,
+) -> AsyncIterator[OAuthEvent]:
     if not config.is_from_default_location:
         yield OAuthEvent(
             "error",
@@ -721,10 +785,10 @@ async def logout_kimi_code(config: Config) -> AsyncIterator[OAuthEvent]:
         )
         return
 
-    delete_tokens(OAuthRef(storage="keyring", key=KIMI_CODE_OAUTH_KEY))
-    delete_tokens(OAuthRef(storage="file", key=KIMI_CODE_OAUTH_KEY))
+    delete_tokens(OAuthRef(storage="keyring", key=oauth_key))
+    delete_tokens(OAuthRef(storage="file", key=oauth_key))
 
-    provider_key = managed_provider_key(KIMI_CODE_PLATFORM_ID)
+    provider_key = managed_provider_key(platform_id)
     if provider_key in config.providers:
         del config.providers[provider_key]
 
@@ -745,6 +809,24 @@ async def logout_kimi_code(config: Config) -> AsyncIterator[OAuthEvent]:
     save_config(config)
     yield OAuthEvent("success", "Logged out successfully.")
     return
+
+
+async def logout_kimi_code(config: Config) -> AsyncIterator[OAuthEvent]:
+    async for event in _logout_platform(
+        config,
+        platform_id=KIMI_CODE_PLATFORM_ID,
+        oauth_key=KIMI_CODE_OAUTH_KEY,
+    ):
+        yield event
+
+
+async def logout_aksesa(config: Config) -> AsyncIterator[OAuthEvent]:
+    async for event in _logout_platform(
+        config,
+        platform_id=AKSESA_PLATFORM_ID,
+        oauth_key=AKSESA_OAUTH_KEY,
+    ):
+        yield event
 
 
 class OAuthManager:
@@ -862,18 +944,23 @@ class OAuthManager:
             )
         return api_key.get_secret_value()
 
-    def _kimi_code_ref(self) -> OAuthRef | None:
-        provider_key = managed_provider_key(KIMI_CODE_PLATFORM_ID)
-        provider = self._config.providers.get(provider_key)
-        if provider and provider.oauth:
-            return provider.oauth
+    def _find_ref_by_key(self, key: str) -> OAuthRef | None:
+        for provider in self._config.providers.values():
+            if provider.oauth and provider.oauth.key == key:
+                return provider.oauth
         for service in (
             self._config.services.moonshot_search,
             self._config.services.moonshot_fetch,
         ):
-            if service and service.oauth and service.oauth.key == KIMI_CODE_OAUTH_KEY:
+            if service and service.oauth and service.oauth.key == key:
                 return service.oauth
         return None
+
+    def _kimi_code_ref(self) -> OAuthRef | None:
+        return self._find_ref_by_key(KIMI_CODE_OAUTH_KEY)
+
+    def _saas_ai_ref(self) -> OAuthRef | None:
+        return self._find_ref_by_key(AKSESA_OAUTH_KEY)
 
     async def ensure_fresh(self, runtime: Runtime | None = None, *, force: bool = False) -> None:
         """Load persisted tokens, cache them, and refresh if close to expiry.
@@ -885,24 +972,22 @@ class OAuthManager:
             force: When True, skip the expiry-threshold check and always
                 attempt a refresh.  Used after receiving a 401 from the server.
         """
-        ref = self._kimi_code_ref()
-        if ref is None:
-            return
-        token = load_tokens(ref)
-        if token is None:
-            return
-        if self._should_suppress_persisted_token(ref, token):
-            self._access_tokens.pop(ref.key, None)
-            self._apply_access_token(runtime, "")
-            if not self._can_retry_rejected_refresh_token(ref, token.refresh_token):
-                if force:
-                    raise OAuthUnauthorized("Refresh token was recently rejected.")
-                return
-        else:
-            self._cache_access_token(ref, token)
-            if token.access_token:
-                self._apply_access_token(runtime, token.access_token)
-        await self._refresh_tokens(ref, token, runtime, force=force)
+        for ref in self._iter_oauth_refs():
+            token = load_tokens(ref)
+            if token is None:
+                continue
+            if self._should_suppress_persisted_token(ref, token):
+                self._access_tokens.pop(ref.key, None)
+                self._apply_access_token(runtime, "")
+                if not self._can_retry_rejected_refresh_token(ref, token.refresh_token):
+                    if force:
+                        raise OAuthUnauthorized("Refresh token was recently rejected.")
+                    continue
+            else:
+                self._cache_access_token(ref, token)
+                if token.access_token:
+                    self._apply_access_token(runtime, token.access_token)
+            await self._refresh_tokens(ref, token, runtime, force=force)
 
     @asynccontextmanager
     async def refreshing(self, runtime: Runtime) -> AsyncIterator[None]:
@@ -947,6 +1032,11 @@ class OAuthManager:
             refresh_task.cancel()
             with suppress(asyncio.CancelledError):
                 await refresh_task
+
+    def _platform_id_from_ref(self, ref: OAuthRef) -> str:
+        if ref.key == AKSESA_OAUTH_KEY:
+            return AKSESA_PLATFORM_ID
+        return KIMI_CODE_PLATFORM_ID
 
     async def _refresh_tokens(
         self,
@@ -1017,7 +1107,10 @@ class OAuthManager:
                     logger.warning("Could not acquire cross-process lock for token refresh")
 
                 try:
-                    refreshed = await refresh_token(refresh_token_value)
+                    refreshed = await refresh_token(
+                        refresh_token_value,
+                        self._platform_id_from_ref(ref),
+                    )
                 except OAuthUnauthorized as exc:
                     # Give a concurrent instance time to persist its rotated token.
                     await asyncio.sleep(1)
@@ -1073,17 +1166,21 @@ class OAuthManager:
     def _apply_access_token(self, runtime: Runtime | None, access_token: str) -> None:
         if runtime is None:
             return
-        provider_key = managed_provider_key(KIMI_CODE_PLATFORM_ID)
         if runtime.llm is None or runtime.llm.model_config is None:
             return
-        if runtime.llm.model_config.provider != provider_key:
-            return
-        from kosong.chat_provider.kimi import Kimi
-
-        assert isinstance(runtime.llm.chat_provider, Kimi), "Expected Kimi chat provider"
+        provider_key = runtime.llm.model_config.provider
         provider = runtime.config.providers.get(provider_key)
-        fallback_api_key = provider.api_key.get_secret_value() if provider else ""
-        runtime.llm.chat_provider.client.api_key = access_token or fallback_api_key
+        if provider is None or not provider.oauth:
+            return
+        chat_provider = runtime.llm.chat_provider
+        # Try common api_key locations across provider types
+        if hasattr(chat_provider, "client") and hasattr(chat_provider.client, "api_key"):
+            fallback = provider.api_key.get_secret_value() if provider else ""
+            chat_provider.client.api_key = access_token or fallback
+        elif hasattr(chat_provider, "_api_key"):
+            chat_provider._api_key = access_token
+        elif hasattr(chat_provider, "api_key"):
+            chat_provider.api_key = access_token
 
 
 if __name__ == "__main__":

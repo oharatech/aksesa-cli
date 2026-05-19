@@ -91,6 +91,12 @@ def augment_provider_with_env_vars(provider: LLMProvider, model: LLMModel) -> di
                 provider.base_url = base_url
             if api_key := os.getenv("OPENAI_API_KEY"):
                 provider.api_key = SecretStr(api_key)
+            if base_url := os.getenv("AKSESA_BASE_URL"):
+                provider.base_url = base_url
+                applied["AKSESA_BASE_URL"] = base_url
+            if api_key := os.getenv("AKSESA_API_KEY"):
+                provider.api_key = SecretStr(api_key)
+                applied["AKSESA_API_KEY"] = "******"
         case _:
             pass
 

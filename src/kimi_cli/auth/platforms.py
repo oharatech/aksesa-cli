@@ -6,7 +6,7 @@ from typing import Any, NamedTuple, cast
 import aiohttp
 from pydantic import BaseModel
 
-from kimi_cli.auth import KIMI_CODE_PLATFORM_ID
+from kimi_cli.auth import KIMI_CODE_PLATFORM_ID, AKSESA_PLATFORM_ID
 from kimi_cli.config import Config, LLMModel, load_config, save_config
 from kimi_cli.llm import ModelCapability
 from kimi_cli.utils.aiohttp import new_client_session
@@ -17,10 +17,10 @@ class ModelInfo(BaseModel):
     """Model information returned from the API."""
 
     id: str
-    context_length: int
-    supports_reasoning: bool
-    supports_image_in: bool
-    supports_video_in: bool
+    context_length: int = 128000
+    supports_reasoning: bool = False
+    supports_image_in: bool = False
+    supports_video_in: bool = False
     display_name: str | None = None
 
     @property
@@ -56,6 +56,12 @@ def _kimi_code_base_url() -> str:
     return "https://api.kimi.com/coding/v1"
 
 
+def _aksesa_base_url() -> str:
+    if base_url := os.getenv("AKSESA_BASE_URL"):
+        return base_url
+    return "https://ai.codecircle.space/v1"
+
+
 PLATFORMS: list[Platform] = [
     Platform(
         id=KIMI_CODE_PLATFORM_ID,
@@ -63,6 +69,11 @@ PLATFORMS: list[Platform] = [
         base_url=_kimi_code_base_url(),
         search_url=f"{_kimi_code_base_url()}/search",
         fetch_url=f"{_kimi_code_base_url()}/fetch",
+    ),
+    Platform(
+        id=AKSESA_PLATFORM_ID,
+        name="Aksesa",
+        base_url=_aksesa_base_url(),
     ),
     Platform(
         id="moonshot-cn",

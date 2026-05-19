@@ -441,7 +441,7 @@ def changelog(app: Shell, args: str):
 @registry.command
 @shell_mode_registry.command
 async def feedback(app: Shell, args: str):
-    """Submit feedback to make Kimi Code CLI better"""
+    """Submit feedback to make Aksesa CLI better"""
     import platform
     import webbrowser
 
