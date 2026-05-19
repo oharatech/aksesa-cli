@@ -19,7 +19,7 @@ class LazySubcommandGroup(typer.core.TyperGroup):
         "mcp": ("kimi_cli.cli.mcp", "cli", "Manage MCP server configurations."),
         "plugin": ("kimi_cli.cli.plugin", "cli", "Manage plugins."),
         "vis": ("kimi_cli.cli.vis", "cli", "Run Kimi Agent Tracing Visualizer."),
-        "web": ("kimi_cli.cli.web", "cli", "Run Kimi Code CLI web interface."),
+        "web": ("kimi_cli.cli.web", "cli", "Run Aksesa CLI web interface."),
     }
     lazy_command_order: tuple[str, ...] = (
         "info",

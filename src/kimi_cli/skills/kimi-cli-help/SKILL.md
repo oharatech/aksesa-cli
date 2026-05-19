@@ -1,11 +1,11 @@
 ---
 name: kimi-cli-help
-description: Answer Kimi Code CLI usage, configuration, and troubleshooting questions. Use when user asks about Kimi Code CLI installation, setup, configuration, slash commands, keyboard shortcuts, MCP integration, providers, environment variables, how something works internally, or any questions about Kimi Code CLI itself.
+description: Answer Aksesa CLI usage, configuration, and troubleshooting questions. Use when user asks about Aksesa CLI installation, setup, configuration, slash commands, keyboard shortcuts, MCP integration, providers, environment variables, how something works internally, or any questions about Aksesa CLI itself.
 ---
 
-# Kimi Code CLI Help
+# Aksesa CLI Help
 
-Help users with Kimi Code CLI questions by consulting documentation and source code.
+Help users with Aksesa CLI questions by consulting documentation and source code.
 
 ## Strategy
 

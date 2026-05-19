@@ -370,7 +370,7 @@ def kimi(
 
     from kimi_cli.utils.proctitle import init_process_name
 
-    init_process_name("Kimi Code")
+    init_process_name("Aksesa")
 
     if ctx.invoked_subcommand is not None:
         return  # skip rest if a subcommand is invoked
@@ -908,20 +908,31 @@ def login(
         "--json",
         help="Emit OAuth events as JSON lines.",
     ),
+    platform: str = typer.Option(
+        "kimi-code",
+        "--platform",
+        help="Platform to log in to (kimi-code or aksesa).",
+    ),
 ) -> None:
-    """Login to your Kimi account."""
+    """Login to your account."""
     import asyncio
 
     from rich.console import Console
     from rich.status import Status
 
-    from kimi_cli.auth.oauth import login_kimi_code
+    from kimi_cli.auth.oauth import login_aksesa, login_kimi_code
     from kimi_cli.config import load_config
 
     async def _run() -> bool:
+        config = load_config()
+        if platform == "aksesa":
+            login_fn = login_aksesa
+        else:
+            login_fn = login_kimi_code
+
         if json:
             ok = True
-            async for event in login_kimi_code(load_config()):
+            async for event in login_fn(config):
                 typer.echo(event.json)
                 if event.type == "error":
                     ok = False
@@ -931,7 +942,7 @@ def login(
         ok = True
         status: Status | None = None
         try:
-            async for event in login_kimi_code(load_config()):
+            async for event in login_fn(config):
                 if event.type == "waiting":
                     if status is None:
                         status = console.status("Waiting for user authorization...")
@@ -967,26 +978,37 @@ def logout(
         "--json",
         help="Emit OAuth events as JSON lines.",
     ),
+    platform: str = typer.Option(
+        "kimi-code",
+        "--platform",
+        help="Platform to log out from (kimi-code or aksesa).",
+    ),
 ) -> None:
-    """Logout from your Kimi account."""
+    """Logout from your account."""
     import asyncio
 
     from rich.console import Console
 
-    from kimi_cli.auth.oauth import logout_kimi_code
+    from kimi_cli.auth.oauth import logout_aksesa, logout_kimi_code
     from kimi_cli.config import load_config
 
     async def _run() -> bool:
+        config = load_config()
+        if platform == "aksesa":
+            logout_fn = logout_aksesa
+        else:
+            logout_fn = logout_kimi_code
+
         ok = True
         if json:
-            async for event in logout_kimi_code(load_config()):
+            async for event in logout_fn(config):
                 typer.echo(event.json)
                 if event.type == "error":
                     ok = False
             return ok
 
         console = Console()
-        async for event in logout_kimi_code(load_config()):
+        async for event in logout_fn(config):
             match event.type:
                 case "error":
                     style = "red"
@@ -1008,7 +1030,7 @@ def logout(
 def term(
     ctx: typer.Context,
 ) -> None:
-    """Run Toad TUI backed by Kimi Code CLI ACP server."""
+    """Run Toad TUI backed by Aksesa CLI ACP server."""
     from .toad import run_term
 
     run_term(ctx)
@@ -1016,7 +1038,7 @@ def term(
 
 @cli.command()
 def acp():
-    """Run Kimi Code CLI ACP server."""
+    """Run Aksesa CLI ACP server."""
     from kimi_cli.acp import acp_main
 
     acp_main()

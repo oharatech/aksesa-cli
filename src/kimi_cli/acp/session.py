@@ -140,7 +140,7 @@ class ACPSession:
 
     @property
     def cli(self) -> KimiCLI:
-        """The Kimi Code CLI instance bound to this ACP session."""
+        """The Aksesa CLI instance bound to this ACP session."""
         return self._cli
 
     def _is_oauth_session(self) -> bool:

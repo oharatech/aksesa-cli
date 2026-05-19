@@ -1,4 +1,4 @@
-# Kimi Code CLI Tools
+# Aksesa CLI Tools
 
 ## Guidelines
 
