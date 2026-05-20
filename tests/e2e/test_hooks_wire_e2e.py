@@ -17,7 +17,6 @@ from pathlib import Path
 from typing import cast
 
 import pytest
-
 from kaos.path import KaosPath
 
 
