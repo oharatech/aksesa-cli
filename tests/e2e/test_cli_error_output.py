@@ -38,17 +38,17 @@ def _normalize_cli_error_output(text: str) -> str:
     lines: list[str] = []
     in_box = False
     for line in text.splitlines():
-        if line.startswith(("╭", "┌")) and "Error" in line:
+        if line.startswith(("╭", "┌", "+-")) and "Error" in line:
             in_box = True
             lines.append("Error:")
             continue
-        if in_box and line.startswith(("╰", "└")):
+        if in_box and line.startswith(("╰", "└", "+-")):
             in_box = False
             continue
-        if in_box and line.startswith(("│", "┃")) and line.endswith(("│", "┃")):
-            inner = line[1:-1].strip()
-            if inner:
-                lines.append(inner)
+        if in_box and line.startswith(("│", "┃", "|")):
+            stripped = line.lstrip("│┃| ").rstrip(" │┃|+")
+            if stripped:
+                lines.append(stripped)
             continue
         lines.append(line.rstrip())
     normalized = "\n".join(lines)
