@@ -17,9 +17,11 @@ def _repo_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
-def _kimi_bin() -> str:
-    """Return the path to the kimi entry-point script inside the venv."""
-    return str(_repo_root() / ".venv" / "bin" / "kimi")
+def _aksesa_bin() -> str:
+    """Return the path to the aksesa entry-point script inside the venv."""
+    if os.name == "nt":
+        return str(_repo_root() / ".venv" / "Scripts" / "aksesa.exe")
+    return str(_repo_root() / ".venv" / "bin" / "aksesa")
 
 
 class ACPTestClient:
@@ -171,7 +173,7 @@ async def acp_client(
 
     async with acp.spawn_agent_process(
         test_client,
-        _kimi_bin(),
+        _aksesa_bin(),
         "acp",
         env=env,
         cwd=str(_repo_root()),
