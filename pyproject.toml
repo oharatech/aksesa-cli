@@ -54,8 +54,8 @@ requires = ["uv_build>=0.8.5,<0.10.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = ["kimi_cli"]
-source-exclude = ["examples/**/*", "tests/**/*", "src/kimi_cli/deps/**/*"]
+module-name = ["aksesa_cli"]
+source-exclude = ["examples/**/*", "tests/**/*", "src/aksesa_cli/deps/**/*"]
 
 [tool.uv.workspace]
 members = [
@@ -71,8 +71,7 @@ pykaos = { workspace = true }
 aksesa-cli = { workspace = true }
 
 [project.scripts]
-kimi = "kimi_cli.__main__:main"
-kimi-cli = "kimi_cli.__main__:main"
+aksesa = "aksesa_cli.__main__:main"
 
 [tool.ruff]
 line-length = 100
@@ -90,7 +89,7 @@ select = [
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["E501"]
 "tests_e2e/**/*.py" = ["E501"]
-"src/kimi_cli/web/api/**/*.py" = ["B008"]  # FastAPI Depends() is standard usage
+"src/aksesa_cli/web/api/**/*.py" = ["B008"]  # FastAPI Depends() is standard usage
 
 [tool.pyright]
 typeCheckingMode = "standard"
@@ -101,7 +100,7 @@ include = [
     "tests_ai/scripts/**/*.py",
     "tests_e2e/**/*.py",
 ]
-strict = ["src/kimi_cli/**/*.py"]
+strict = ["src/aksesa_cli/**/*.py"]
 
 [tool.ty.environment]
 python-version = "3.14"
@@ -115,7 +114,7 @@ include = [
 ]
 
 [tool.typos.files]
-extend-exclude = ["kimi.spec", "pyinstaller.py"]
+extend-exclude = ["aksesa.spec", "pyinstaller.py"]
 
 [tool.typos.default.extend-words]
 datas = "datas"
