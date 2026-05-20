@@ -4,7 +4,7 @@ version = "1.44.0"
 description = "Kimi Code is a CLI agent that lives in your terminal."
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["kimi-cli==1.44.0"]
+dependencies = ["aksesa-cli==1.44.0"]
 
 [project.scripts]
 kimi-code = "aksesa_cli.__main__:main"
