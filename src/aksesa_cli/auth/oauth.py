@@ -761,9 +761,7 @@ async def login_kimi_code(
         yield event
 
 
-async def login_aksesa(
-    config: Config, *, open_browser: bool = True
-) -> AsyncIterator[OAuthEvent]:
+async def login_aksesa(config: Config, *, open_browser: bool = True) -> AsyncIterator[OAuthEvent]:
     async for event in _login_platform(
         config,
         platform_id=AKSESA_PLATFORM_ID,

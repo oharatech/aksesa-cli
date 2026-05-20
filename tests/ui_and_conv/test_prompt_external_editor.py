@@ -86,7 +86,9 @@ async def test_open_in_external_editor_expands_and_refolds_text_placeholders(mon
 
     edit_calls: list[tuple[str, str]] = []
 
-    monkeypatch.setattr("aksesa_cli.utils.editor.get_editor_command", lambda configured=None: ["vim"])
+    monkeypatch.setattr(
+        "aksesa_cli.utils.editor.get_editor_command", lambda configured=None: ["vim"]
+    )
 
     def fake_edit_text_in_editor(text: str, configured: str | None = None):
         edit_calls.append((text, configured or ""))
@@ -128,7 +130,9 @@ async def test_open_in_external_editor_leaves_moved_text_expanded_when_refold_is
     buff = _DummyBuffer(f"{pasted_text}\n---\n{token}")
     event = SimpleNamespace(current_buffer=buff, app=app)
 
-    monkeypatch.setattr("aksesa_cli.utils.editor.get_editor_command", lambda configured=None: ["vim"])
+    monkeypatch.setattr(
+        "aksesa_cli.utils.editor.get_editor_command", lambda configured=None: ["vim"]
+    )
 
     def fake_edit_text_in_editor(text: str, configured: str | None = None):
         return f"{pasted_text}\n{pasted_text}\n---\n"

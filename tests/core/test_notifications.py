@@ -444,7 +444,9 @@ async def test_aksesa_cli_run_propagates_external_cancel_event(
 
 
 @pytest.mark.asyncio
-async def test_aksesa_cli_run_replays_pending_approvals_from_previous_turn(runtime: Runtime) -> None:
+async def test_aksesa_cli_run_replays_pending_approvals_from_previous_turn(
+    runtime: Runtime,
+) -> None:
     assert runtime.approval_runtime is not None
     runtime.approval_runtime.create_request(
         request_id="req-run-replay-1",

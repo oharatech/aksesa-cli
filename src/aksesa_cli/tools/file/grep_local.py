@@ -379,8 +379,10 @@ def _strip_path_prefix(output: str, search_base: str) -> str:
     prefix = search_base.rstrip("/\\") + os.sep
     alt_prefix = search_base.rstrip("/\\") + "/"
     return "\n".join(
-        line[len(prefix) :] if line.startswith(prefix)
-        else line[len(alt_prefix) :] if line.startswith(alt_prefix)
+        line[len(prefix) :]
+        if line.startswith(prefix)
+        else line[len(alt_prefix) :]
+        if line.startswith(alt_prefix)
         else line
         for line in output.split("\n")
     )

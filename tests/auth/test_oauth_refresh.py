@@ -377,7 +377,8 @@ async def test_ensure_fresh_force_raises_on_unauthorized():
     with (
         patch("aksesa_cli.auth.oauth.load_tokens", return_value=token),
         patch(
-            "aksesa_cli.auth.oauth.refresh_token", AsyncMock(side_effect=OAuthUnauthorized("revoked"))
+            "aksesa_cli.auth.oauth.refresh_token",
+            AsyncMock(side_effect=OAuthUnauthorized("revoked")),
         ),
         patch("aksesa_cli.auth.oauth.asyncio.sleep", new=AsyncMock()),
         pytest.raises(OAuthUnauthorized, match="revoked"),
@@ -532,7 +533,8 @@ async def test_ensure_fresh_force_raises_on_network_error():
     with (
         patch("aksesa_cli.auth.oauth.load_tokens", return_value=token),
         patch(
-            "aksesa_cli.auth.oauth.refresh_token", AsyncMock(side_effect=OAuthError("after retries"))
+            "aksesa_cli.auth.oauth.refresh_token",
+            AsyncMock(side_effect=OAuthError("after retries")),
         ),
         pytest.raises(OAuthError, match="after retries"),
     ):
