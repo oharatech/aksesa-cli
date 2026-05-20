@@ -32,7 +32,7 @@ def _run_print_mode(config_path: Path, work_dir: Path, user_prompt: str) -> tupl
     cmd = [
         "uv",
         "run",
-        "kimi",
+        "aksesa",
         "--print",
         "--yolo",
         "--input-format",
@@ -64,7 +64,7 @@ def _run_shell_mode(config_path: Path, work_dir: Path, user_prompt: str) -> tupl
     cmd = [
         "uv",
         "run",
-        "kimi",
+        "aksesa",
         "--yolo",
         "--prompt",
         user_prompt,
@@ -145,7 +145,7 @@ def _run_wire_mode(
     cmd = [
         "uv",
         "run",
-        "kimi",
+        "aksesa",
         "--wire",
         "--yolo",
         "--config-file",
