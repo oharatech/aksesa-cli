@@ -44,7 +44,7 @@ Documentation:        https://moonshotai.github.io/kimi-cli/\n
 LLM friendly version: https://moonshotai.github.io/kimi-cli/llms.txt""",
     add_completion=False,
     context_settings={"help_option_names": ["-h", "--help"]},
-    help="Kimi, your next CLI agent.",
+    help="Aksesa, your next CLI agent.",
 )
 
 UIMode = Literal["shell", "print", "acp", "wire"]
@@ -70,7 +70,7 @@ def _version_callback(value: bool) -> None:
     if value:
         from aksesa_cli.constant import get_version
 
-        typer.echo(f"kimi, version {get_version()}")
+        typer.echo(f"aksesa, version {get_version()}")
         raise typer.Exit()
 
 

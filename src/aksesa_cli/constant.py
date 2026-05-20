@@ -20,12 +20,12 @@ if TYPE_CHECKING:
 def get_version() -> str:
     from importlib import metadata
 
-    return metadata.version("kimi-cli")
+    return metadata.version("aksesa-cli")
 
 
 @cache
 def get_user_agent() -> str:
-    return f"KimiCLI/{get_version()}"
+    return f"AksesaCLI/{get_version()}"
 
 
 def _normalize_remote(url: str) -> str:
