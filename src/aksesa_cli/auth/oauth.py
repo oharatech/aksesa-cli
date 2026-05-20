@@ -44,6 +44,7 @@ from aksesa_cli.utils.aiohttp import new_client_session
 from aksesa_cli.utils.logging import logger
 
 if TYPE_CHECKING:
+    from aksesa_cli.llm import ProviderType
     from aksesa_cli.soul.agent import Runtime
 
 
@@ -193,10 +194,7 @@ def _client_id(platform_id: str = KIMI_CODE_PLATFORM_ID) -> str:
     return KIMI_CODE_CLIENT_ID
 
 
-def _oauth_key(platform_id: str = KIMI_CODE_PLATFORM_ID) -> str:
-    if platform_id == AKSESA_PLATFORM_ID:
-        return AKSESA_OAUTH_KEY
-    return KIMI_CODE_OAUTH_KEY
+
 
 
 def _device_id_path() -> Path:
@@ -597,7 +595,7 @@ def _apply_platform_config(
 
     provider_key = managed_provider_key(platform.id)
     config.providers[provider_key] = LLMProvider(
-        type=provider_type,
+        type=cast("ProviderType", provider_type),
         base_url=platform.base_url,
         api_key=SecretStr(""),
         oauth=oauth_ref,
@@ -1172,7 +1170,7 @@ class OAuthManager:
         provider = runtime.config.providers.get(provider_key)
         if provider is None or not provider.oauth:
             return
-        chat_provider = runtime.llm.chat_provider
+        chat_provider: Any = runtime.llm.chat_provider
         # Try common api_key locations across provider types
         if hasattr(chat_provider, "client") and hasattr(chat_provider.client, "api_key"):
             fallback = provider.api_key.get_secret_value() if provider else ""
