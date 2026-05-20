@@ -1,0 +1,36 @@
+version: 1
+agent:
+  name: ""
+  system_prompt_path: ./system.md
+  system_prompt_args:
+    ROLE_ADDITIONAL: ""
+  tools:
+    - "aksesa_cli.tools.agent:Agent"
+    # - "aksesa_cli.tools.dmail:SendDMail"
+    # - "aksesa_cli.tools.think:Think"
+    - "aksesa_cli.tools.ask_user:AskUserQuestion"
+    - "aksesa_cli.tools.todo:SetTodoList"
+    - "aksesa_cli.tools.shell:Shell"
+    - "aksesa_cli.tools.background:TaskList"
+    - "aksesa_cli.tools.background:TaskOutput"
+    - "aksesa_cli.tools.background:TaskStop"
+    - "aksesa_cli.tools.file:ReadFile"
+    - "aksesa_cli.tools.file:ReadMediaFile"
+    - "aksesa_cli.tools.file:Glob"
+    - "aksesa_cli.tools.file:Grep"
+    - "aksesa_cli.tools.file:WriteFile"
+    - "aksesa_cli.tools.file:StrReplaceFile"
+    - "aksesa_cli.tools.web:SearchWeb"
+    - "aksesa_cli.tools.web:FetchURL"
+    - "aksesa_cli.tools.plan:ExitPlanMode"
+    - "aksesa_cli.tools.plan.enter:EnterPlanMode"
+  subagents:
+    coder:
+      path: ./coder.yaml
+      description: "Good at general software engineering tasks."
+    explore:
+      path: ./explore.yaml
+      description: "Fast codebase exploration with prompt-enforced read-only behavior."
+    plan:
+      path: ./plan.yaml
+      description: "Read-only implementation planning and architecture design."

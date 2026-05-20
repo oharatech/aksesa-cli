@@ -1,0 +1,22 @@
+version: 1
+agent:
+  extend: default
+  tools:
+    - "aksesa_cli.tools.agent:Agent"
+    - "aksesa_cli.tools.dmail:SendDMail"
+    - "aksesa_cli.tools.ask_user:AskUserQuestion"
+    - "aksesa_cli.tools.todo:SetTodoList"
+    - "aksesa_cli.tools.shell:Shell"
+    - "aksesa_cli.tools.background:TaskList"
+    - "aksesa_cli.tools.background:TaskOutput"
+    - "aksesa_cli.tools.background:TaskStop"
+    - "aksesa_cli.tools.file:ReadFile"
+    - "aksesa_cli.tools.file:ReadMediaFile"
+    - "aksesa_cli.tools.file:Glob"
+    - "aksesa_cli.tools.file:Grep"
+    - "aksesa_cli.tools.file:WriteFile"
+    - "aksesa_cli.tools.file:StrReplaceFile"
+    - "aksesa_cli.tools.web:SearchWeb"
+    - "aksesa_cli.tools.web:FetchURL"
+    - "aksesa_cli.tools.plan:ExitPlanMode"
+    - "aksesa_cli.tools.plan.enter:EnterPlanMode"
