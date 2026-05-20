@@ -1,4 +1,4 @@
-name: Release (kimi-cli)
+name: Release (aksesa-cli)
 
 on:
   push:
@@ -157,9 +157,9 @@ jobs:
           codesign --deep --force --options runtime --timestamp \
             --sign "$APPLE_SIGNING_IDENTITY" \
             --keychain "$APPLE_KEYCHAIN_PATH" \
-            dist/onefile/kimi
+            dist/onefile/aksesa
           echo "✅ Onefile binary signed"
-          codesign -dv --verbose=2 dist/onefile/kimi
+          codesign -dv --verbose=2 dist/onefile/aksesa
 
       # macOS: Sign onedir binaries (all dylibs and executables)
       - name: Sign macOS onedir binaries
@@ -169,7 +169,7 @@ jobs:
           echo "Signing onedir binaries..."
           
           # 1. Sign all dylibs and so files first (excluding those inside frameworks)
-          find dist/onedir/kimi -type f \( -name "*.dylib" -o -name "*.so" \) ! -path "*.framework/*" | while read -r lib; do
+          find dist/onedir/aksesa -type f \( -name "*.dylib" -o -name "*.so" \) ! -path "*.framework/*" | while read -r lib; do
             echo "Signing: $lib"
             codesign --force --options runtime --timestamp \
               --sign "$APPLE_SIGNING_IDENTITY" \
@@ -178,7 +178,7 @@ jobs:
           done
           
           # 2. Sign all frameworks with --deep (important for Python.framework)
-          find dist/onedir/kimi -type d -name "*.framework" | while read -r framework; do
+          find dist/onedir/aksesa -type d -name "*.framework" | while read -r framework; do
             echo "Signing framework: $framework"
             codesign --deep --force --options runtime --timestamp \
               --sign "$APPLE_SIGNING_IDENTITY" \
@@ -187,15 +187,15 @@ jobs:
           done
           
           # 3. Sign the main executable last
-          echo "Signing main executable: dist/onedir/kimi/kimi"
+          echo "Signing main executable: dist/onedir/aksesa/aksesa"
           codesign --force --options runtime --timestamp \
             --sign "$APPLE_SIGNING_IDENTITY" \
             --keychain "$APPLE_KEYCHAIN_PATH" \
-            dist/onedir/kimi/kimi
+            dist/onedir/aksesa/aksesa
           
           echo "✅ Onedir binaries signed"
-          codesign -dv --verbose=2 dist/onedir/kimi/kimi
-          codesign --verify --deep --strict dist/onedir/kimi/kimi && echo "✅ Deep verification passed"
+          codesign -dv --verbose=2 dist/onedir/aksesa/aksesa
+          codesign --verify --deep --strict dist/onedir/aksesa/aksesa && echo "✅ Deep verification passed"
 
       # macOS: Notarize onefile binary
       - name: Notarize macOS onefile binary
@@ -212,8 +212,8 @@ jobs:
           echo "$APPLE_NOTARIZATION_KEY_P8" | base64 -d > "$key_path"
 
           # Create zip for notarization (use --norsrc to avoid ._ AppleDouble files)
-          zip_path="${RUNNER_TEMP}/kimi-onefile.zip"
-          ditto -c -k --norsrc --keepParent dist/onefile/kimi "$zip_path"
+          zip_path="${RUNNER_TEMP}/aksesa-onefile.zip"
+          ditto -c -k --norsrc --keepParent dist/onefile/aksesa "$zip_path"
 
           echo "Submitting onefile for notarization..."
           
@@ -247,10 +247,10 @@ jobs:
 
           # Verify signature and notarization status
           echo "Verifying onefile signature..."
-          codesign -dv --verbose=2 dist/onefile/kimi
+          codesign -dv --verbose=2 dist/onefile/aksesa
           
           echo "Verifying onefile notarization (online check)..."
-          spctl -a -vvv -t install dist/onefile/kimi
+          spctl -a -vvv -t install dist/onefile/aksesa
 
           # Cleanup
           rm -f "$zip_path" /tmp/notarize-onefile.log
@@ -272,8 +272,8 @@ jobs:
           fi
 
           # Create zip for notarization (use --norsrc to avoid ._ AppleDouble files)
-          zip_path="${RUNNER_TEMP}/kimi-onedir.zip"
-          ditto -c -k --norsrc --keepParent dist/onedir/kimi "$zip_path"
+          zip_path="${RUNNER_TEMP}/aksesa-onedir.zip"
+          ditto -c -k --norsrc --keepParent dist/onedir/aksesa "$zip_path"
 
           echo "Submitting onedir for notarization..."
           
@@ -307,10 +307,10 @@ jobs:
 
           # Verify signature and notarization status
           echo "Verifying onedir signature..."
-          codesign -dv --verbose=2 dist/onedir/kimi/kimi
+          codesign -dv --verbose=2 dist/onedir/aksesa/aksesa
           
           echo "Verifying onedir notarization (online check)..."
-          spctl -a -vvv -t install dist/onedir/kimi/kimi
+          spctl -a -vvv -t install dist/onedir/aksesa/aksesa
 
           # Cleanup
           rm -f "$key_path" "$zip_path" /tmp/notarize-onedir.log
@@ -344,7 +344,7 @@ jobs:
 
           is_windows = "windows" in target
           is_macos = "apple-darwin" in target
-          binary_name = "kimi.exe" if is_windows else "kimi"
+          binary_name = "aksesa.exe" if is_windows else "aksesa"
           binary_path = dist_dir / "onefile" / binary_name
           if not binary_path.exists():
               raise SystemExit(f"Binary not found at {binary_path}")
@@ -354,15 +354,15 @@ jobs:
           # - macOS: .tar.gz
           # - Linux: .tar.gz
           if is_windows:
-              archive_name = f"kimi-{tag}-{target}.zip"
+              archive_name = f"aksesa-{tag}-{target}.zip"
               archive_path = artifacts_dir / archive_name
               with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive_file:
                   archive_file.write(binary_path, arcname=binary_name)
           else:
-              archive_name = f"kimi-{tag}-{target}.tar.gz"
+              archive_name = f"aksesa-{tag}-{target}.tar.gz"
               archive_path = artifacts_dir / archive_name
               with tarfile.open(archive_path, "w:gz") as archive_file:
-                  archive_file.add(binary_path, arcname="kimi")
+                  archive_file.add(binary_path, arcname="aksesa")
 
           print(f"Built onefile artifact: {archive_path}")
 
@@ -387,28 +387,28 @@ jobs:
 
           is_windows = "windows" in target
 
-          # Windows: onedir is dist/onedir/kimi with kimi.exe inside
-          # Others: onedir is dist/onedir/kimi with kimi inside
-          onedir_path = dist_dir / "onedir" / "kimi"
+          # Windows: onedir is dist/onedir/aksesa with aksesa.exe inside
+          # Others: onedir is dist/onedir/aksesa with aksesa inside
+          onedir_path = dist_dir / "onedir" / "aksesa"
           if not onedir_path.exists() or not onedir_path.is_dir():
               raise SystemExit(f"Onedir directory not found at {onedir_path}")
 
           if is_windows:
-              archive_name = f"kimi-{tag}-{target}-onedir.zip"
+              archive_name = f"aksesa-{tag}-{target}-onedir.zip"
               archive_path = artifacts_dir / archive_name
               with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive_file:
-                  # Add the directory contents with kimi/ as the root
+                  # Add the directory contents with aksesa/ as the root
                   for item in onedir_path.rglob("*"):
                       if item.is_file():
-                          arcname = f"kimi/{item.relative_to(onedir_path)}"
+                          arcname = f"aksesa/{item.relative_to(onedir_path)}"
                           archive_file.write(item, arcname=arcname)
           else:
-              archive_name = f"kimi-{tag}-{target}-onedir.tar.gz"
+              archive_name = f"aksesa-{tag}-{target}-onedir.tar.gz"
               archive_path = artifacts_dir / archive_name
               with tarfile.open(archive_path, "w:gz") as archive_file:
-                  # Add the directory contents with kimi/ as the root
+                  # Add the directory contents with aksesa/ as the root
                   for item in onedir_path.iterdir():
-                      archive_file.add(item, arcname=f"kimi/{item.name}")
+                      archive_file.add(item, arcname=f"aksesa/{item.name}")
 
           print(f"Built onedir artifact: {archive_path}")
 
@@ -420,7 +420,7 @@ jobs:
           ref = os.environ["GITHUB_REF_NAME"].replace("/", "-")
           target = "${{ matrix.target }}"
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-              f.write(f"name=kimi-{ref}-{target}\n")
+              f.write(f"name=aksesa-{ref}-{target}\n")
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -500,7 +500,7 @@ jobs:
           cache-dependency-path: web/package-lock.json
 
       - name: Build distributions
-        run: make build-kimi-cli
+        run: make build-aksesa-cli
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
