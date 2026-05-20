@@ -1,5 +1,6 @@
-from inline_snapshot import snapshot
 import json
+
+from inline_snapshot import snapshot
 
 pretty = json.dumps({"test_cmd": "/test_cmd: First version."}, indent=2, sort_keys=True)
 print("json.dumps:", repr(pretty))

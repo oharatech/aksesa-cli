@@ -21,7 +21,7 @@ import aiohttp
 import keyring
 from pydantic import SecretStr
 
-from aksesa_cli.auth import KIMI_CODE_PLATFORM_ID, AKSESA_PLATFORM_ID
+from aksesa_cli.auth import AKSESA_PLATFORM_ID, KIMI_CODE_PLATFORM_ID
 from aksesa_cli.auth.platforms import (
     ModelInfo,
     get_platform_by_id,
@@ -468,7 +468,9 @@ def delete_tokens(ref: OAuthRef) -> None:
     _delete_from_file(ref.key)
 
 
-async def request_device_authorization(platform_id: str = KIMI_CODE_PLATFORM_ID) -> DeviceAuthorization:
+async def request_device_authorization(
+    platform_id: str = KIMI_CODE_PLATFORM_ID,
+) -> DeviceAuthorization:
     async with (
         new_client_session() as session,
         session.post(

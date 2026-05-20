@@ -14,7 +14,12 @@ from pydantic import BaseModel
 from aksesa_cli.soul import get_wire_or_none, wire_send
 from aksesa_cli.soul.toolset import get_current_tool_call_or_none
 from aksesa_cli.tools.utils import load_desc
-from aksesa_cli.wire.types import QuestionItem, QuestionNotSupported, QuestionOption, QuestionRequest
+from aksesa_cli.wire.types import (
+    QuestionItem,
+    QuestionNotSupported,
+    QuestionOption,
+    QuestionRequest,
+)
 
 logger = logging.getLogger(__name__)
 

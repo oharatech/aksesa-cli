@@ -7,7 +7,6 @@ from types import SimpleNamespace
 from typing import TYPE_CHECKING, cast
 
 import pytest
-
 from PIL import Image
 from prompt_toolkit.key_binding import KeyPressEvent
 

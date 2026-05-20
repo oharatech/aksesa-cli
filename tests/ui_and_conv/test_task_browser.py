@@ -6,7 +6,6 @@ import time
 from pathlib import Path
 
 import pytest
-
 from kosong.tooling.empty import EmptyToolset
 
 from aksesa_cli.background import TaskRuntime, TaskSpec, TaskStatus

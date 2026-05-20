@@ -925,10 +925,7 @@ def login(
 
     async def _run() -> bool:
         config = load_config()
-        if platform == "aksesa":
-            login_fn = login_aksesa
-        else:
-            login_fn = login_kimi_code
+        login_fn = login_aksesa if platform == "aksesa" else login_kimi_code
 
         if json:
             ok = True
@@ -994,10 +991,7 @@ def logout(
 
     async def _run() -> bool:
         config = load_config()
-        if platform == "aksesa":
-            logout_fn = logout_aksesa
-        else:
-            logout_fn = logout_kimi_code
+        logout_fn = logout_aksesa if platform == "aksesa" else logout_kimi_code
 
         ok = True
         if json:

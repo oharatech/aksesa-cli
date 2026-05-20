@@ -14,8 +14,8 @@ class _LazyLogger:
             from loguru import logger as real_logger
 
             # Disable logging by default for library usage.
-            # Application entry points (e.g., aksesa_cli.cli) should call logger.enable("aksesa_cli")
-            # to enable logging.
+            # Application entry points (e.g., aksesa_cli.cli) should call
+            # logger.enable("aksesa_cli") to enable logging.
             real_logger.disable("aksesa_cli")
             self._logger = real_logger
         return self._logger

@@ -13,7 +13,14 @@ from kosong.utils.typing import JsonType
 
 from aksesa_cli.approval_runtime import ApprovalRuntime
 from aksesa_cli.constant import USER_AGENT
-from aksesa_cli.soul import LLMNotSet, LLMNotSupported, MaxStepsReached, RunCancelled, Soul, run_soul
+from aksesa_cli.soul import (
+    LLMNotSet,
+    LLMNotSupported,
+    MaxStepsReached,
+    RunCancelled,
+    Soul,
+    run_soul,
+)
 from aksesa_cli.soul.kimisoul import KimiSoul
 from aksesa_cli.soul.toolset import KimiToolset, WireExternalTool
 from aksesa_cli.utils.aioqueue import Queue, QueueShutDown

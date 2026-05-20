@@ -26,7 +26,14 @@ from aksesa_cli import logger
 from aksesa_cli.background import list_task_views
 from aksesa_cli.llm import model_display_name
 from aksesa_cli.notifications import NotificationManager, NotificationWatcher
-from aksesa_cli.soul import LLMNotSet, LLMNotSupported, MaxStepsReached, RunCancelled, Soul, run_soul
+from aksesa_cli.soul import (
+    LLMNotSet,
+    LLMNotSupported,
+    MaxStepsReached,
+    RunCancelled,
+    Soul,
+    run_soul,
+)
 from aksesa_cli.soul.kimisoul import FLOW_COMMAND_PREFIX, KimiSoul
 from aksesa_cli.ui.shell import update as _update_mod
 from aksesa_cli.ui.shell.console import console

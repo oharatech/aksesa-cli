@@ -1,4 +1,5 @@
 import os
+
 import pytest
 
 from aksesa_cli.hooks.runner import run_hook

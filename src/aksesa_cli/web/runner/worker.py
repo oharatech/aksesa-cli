@@ -60,7 +60,9 @@ async def run_worker(session_id: UUID) -> None:
             path=default_mcp_file,
             error=exc,
         )
-        aksesa_cli = await KimiCLI.create(session, mcp_configs=None, resumed=resumed, ui_mode="wire")
+        aksesa_cli = await KimiCLI.create(
+            session, mcp_configs=None, resumed=resumed, ui_mode="wire"
+        )
 
     # Run in wire stdio mode
     await aksesa_cli.run_wire_stdio()

@@ -6,7 +6,7 @@ from typing import Any, NamedTuple, cast
 import aiohttp
 from pydantic import BaseModel
 
-from aksesa_cli.auth import KIMI_CODE_PLATFORM_ID, AKSESA_PLATFORM_ID
+from aksesa_cli.auth import AKSESA_PLATFORM_ID, KIMI_CODE_PLATFORM_ID
 from aksesa_cli.config import Config, LLMModel, load_config, save_config
 from aksesa_cli.llm import ModelCapability
 from aksesa_cli.utils.aiohttp import new_client_session
