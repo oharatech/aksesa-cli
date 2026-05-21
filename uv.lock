@@ -170,7 +170,7 @@ wheels = [
 
 [[package]]
 name = "aksesa"
-version = "1.44.4"
+version = "1.44.5"
 source = { editable = "packages/aksesa" }
 dependencies = [
     { name = "aksesa-cli" },
@@ -181,7 +181,7 @@ requires-dist = [{ name = "aksesa-cli", editable = "." }]
 
 [[package]]
 name = "aksesa-cli"
-version = "1.44.4"
+version = "1.44.5"
 source = { editable = "." }
 dependencies = [
     { name = "agent-client-protocol" },
