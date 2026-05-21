@@ -2,18 +2,24 @@ from __future__ import annotations
 
 import contextlib
 import errno
-import fcntl
 import hashlib
 import json
 import os
-import pty
 import re
 import select
 import struct
 import subprocess
 import sys
-import termios
 import time
+
+try:
+    import fcntl
+    import pty
+    import termios
+except ImportError:
+    fcntl = None  # type: ignore
+    pty = None  # type: ignore
+    termios = None  # type: ignore
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -57,13 +63,13 @@ def _normalize_terminal_text(text: str) -> str:
 
 def _set_window_size(fd: int, *, columns: int, lines: int) -> None:
     packed = struct.pack("HHHH", lines, columns, 0, 0)
-    fcntl.ioctl(fd, termios.TIOCSWINSZ, packed)
+    fcntl.ioctl(fd, termios.TIOCSWINSZ, packed)  # type: ignore
 
 
 def _preexec_for_tty(slave_fd: int):
     def _run() -> None:
-        os.setsid()
-        fcntl.ioctl(slave_fd, termios.TIOCSCTTY, 0)
+        os.setsid()  # type: ignore
+        fcntl.ioctl(slave_fd, termios.TIOCSCTTY, 0)  # type: ignore
 
     return _run
 
@@ -216,7 +222,7 @@ def start_shell_pty(
     columns: int = 120,
     lines: int = 40,
 ) -> ShellPTYProcess:
-    master_fd, slave_fd = pty.openpty()
+    master_fd, slave_fd = pty.openpty()  # type: ignore
     _set_window_size(master_fd, columns=columns, lines=lines)
     _set_window_size(slave_fd, columns=columns, lines=lines)
     os.set_blocking(master_fd, False)

@@ -194,9 +194,6 @@ def _client_id(platform_id: str = KIMI_CODE_PLATFORM_ID) -> str:
     return KIMI_CODE_CLIENT_ID
 
 
-
-
-
 def _device_id_path() -> Path:
     return get_share_dir() / "device_id"
 
