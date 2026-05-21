@@ -99,13 +99,23 @@ async def _run_git(args: list[str], cwd: str, timeout: float = _TIMEOUT) -> str 
     except TimeoutError:
         logger.debug("git {args} timed out after {t}s", args=args, t=timeout)
         if proc is not None:
-            await proc.kill()
+            try:
+                await proc.kill()
+            except ProcessLookupError:
+                pass
+            except Exception:
+                pass
             await proc.wait()
         return None
     except Exception:
         logger.debug("git {args} failed", args=args)
         if proc is not None and proc.returncode is None:
-            await proc.kill()
+            try:
+                await proc.kill()
+            except ProcessLookupError:
+                pass
+            except Exception:
+                pass
             await proc.wait()
         return None
 
