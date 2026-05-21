@@ -59,7 +59,10 @@ class LocalKaos:
             return await self._process.wait()
 
         async def kill(self) -> None:
-            self._process.kill()
+            try:
+                self._process.kill()
+            except ProcessLookupError:
+                pass
 
     def pathclass(self) -> type[PurePath]:
         return PurePathClass

@@ -91,7 +91,10 @@ class SSHKaos:
             return 1 if self._process.returncode is None else self._process.returncode
 
         async def kill(self) -> None:
-            self._process.kill()
+            try:
+                self._process.kill()
+            except Exception:
+                pass
 
     @classmethod
     async def create(
