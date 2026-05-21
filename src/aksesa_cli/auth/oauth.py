@@ -475,23 +475,45 @@ async def request_device_authorization(
         ) as response,
     ):
         status = response.status
+        if status != 200:
+            err_dict: dict[str, Any] | None = None
+            try:
+                err_data = await response.json(content_type=None)
+                if isinstance(err_data, dict):
+                    err_dict = cast(dict[str, Any], err_data)
+            except Exception:
+                pass
+            if err_dict is not None:
+                error_desc = str(
+                    err_dict.get("error_description") or err_dict.get("error") or "Unknown error"
+                )
+                raise OAuthError(
+                    f"Device authorization failed ({status}): {error_desc}. "
+                    "Please verify your network/proxy settings, "
+                    "or try running the login command again."
+                )
+            else:
+                raw_text = await response.text()
+                snippet = raw_text[:200]
+                raise OAuthError(
+                    f"Device authorization failed ({status}): {snippet}. "
+                    "The authentication server returned an unexpected response. "
+                    "Please try again later."
+                )
         try:
-            data = await response.json(content_type=None)
-        except Exception:
-            data = await response.text()
-    if status != 200:
-        if isinstance(data, dict):
-            error_desc = data.get("error_description") or data.get("error") or "Unknown error"
+            data_any = await response.json(content_type=None)
+        except Exception as e:
+            raw_text = await response.text()
+            snippet = raw_text[:200]
             raise OAuthError(
-                f"Device authorization failed ({status}): {error_desc}. "
-                "Please verify your network/proxy settings, or try running the login command again."
-            )
-        else:
-            snippet = str(data)[:200]
+                f"Device authorization failed to parse response: {e}. Raw response: {snippet}"
+            ) from e
+        if not isinstance(data_any, dict):
             raise OAuthError(
-                f"Device authorization failed ({status}): {snippet}. "
-                "The authentication server returned an unexpected response. Please try again later."
+                "Device authorization returned unexpected JSON format. "
+                f"Expected object, got {type(data_any).__name__}"
             )
+        data = cast(dict[str, Any], data_any)
     return DeviceAuthorization(
         user_code=str(data["user_code"]),
         device_code=str(data["device_code"]),

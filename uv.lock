@@ -170,7 +170,7 @@ wheels = [
 
 [[package]]
 name = "aksesa-cli"
-version = "1.44.3"
+version = "1.44.4"
 source = { editable = "." }
 dependencies = [
     { name = "agent-client-protocol" },
@@ -227,13 +227,13 @@ requires-dist = [
     { name = "httpx", extras = ["socks"], specifier = "==0.28.1" },
     { name = "jinja2", specifier = "==3.1.6" },
     { name = "keyring", specifier = ">=25.7.0" },
-    { name = "kosong", extras = ["contrib"], editable = "packages/kosong" },
+    { name = "kosong", extras = ["contrib"], specifier = "==0.53.0" },
     { name = "loguru", specifier = ">=0.6.0,<0.8" },
     { name = "lxml", specifier = "==6.0.2" },
     { name = "pillow", specifier = "==12.2.0" },
     { name = "prompt-toolkit", specifier = "==3.0.52" },
     { name = "pydantic", specifier = "==2.12.5" },
-    { name = "pykaos", editable = "packages/kaos" },
+    { name = "pykaos", specifier = "==0.9.0" },
     { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'", specifier = ">=12.1" },
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "rich", specifier = "==14.2.0" },
@@ -1374,14 +1374,14 @@ wheels = [
 
 [[package]]
 name = "kimi-code"
-version = "1.44.3"
+version = "1.44.4"
 source = { editable = "packages/kimi-code" }
 dependencies = [
     { name = "aksesa-cli" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "aksesa-cli", editable = "." }]
+requires-dist = [{ name = "aksesa-cli", specifier = "==1.44.4" }]
 
 [[package]]
 name = "kimi-sdk"
@@ -1404,7 +1404,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "kosong", editable = "packages/kosong" }]
+requires-dist = [{ name = "kosong", specifier = ">=0.37.0" }]
 
 [package.metadata.requires-dev]
 dev = [
