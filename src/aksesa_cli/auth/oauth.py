@@ -30,11 +30,11 @@ from aksesa_cli.auth.platforms import (
     managed_provider_key,
 )
 from aksesa_cli.config import (
+    AksesaFetchConfig,
+    AksesaSearchConfig,
     Config,
     LLMModel,
     LLMProvider,
-    AksesaFetchConfig,
-    AksesaSearchConfig,
     OAuthRef,
     save_config,
 )

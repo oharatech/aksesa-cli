@@ -4,7 +4,7 @@ version = "1.44.6"
 description = "Aksesa is a CLI agent that lives in your terminal."
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["aksesa-cli==1.44.5"]
+dependencies = ["aksesa-cli==1.44.6"]
 
 [project.scripts]
 aksesa = "aksesa_cli.__main__:main"
