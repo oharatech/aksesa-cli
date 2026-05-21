@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import posixpath
 import shlex
 import stat
@@ -91,10 +92,8 @@ class SSHKaos:
             return 1 if self._process.returncode is None else self._process.returncode
 
         async def kill(self) -> None:
-            try:
+            with contextlib.suppress(Exception):
                 self._process.kill()
-            except Exception:
-                pass
 
     @classmethod
     async def create(

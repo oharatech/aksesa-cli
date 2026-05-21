@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import os
 from asyncio.subprocess import Process as AsyncioProcess
 from collections.abc import AsyncGenerator
@@ -59,10 +60,8 @@ class LocalKaos:
             return await self._process.wait()
 
         async def kill(self) -> None:
-            try:
+            with contextlib.suppress(ProcessLookupError):
                 self._process.kill()
-            except ProcessLookupError:
-                pass
 
     def pathclass(self) -> type[PurePath]:
         return PurePathClass
