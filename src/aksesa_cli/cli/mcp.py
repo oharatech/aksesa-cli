@@ -243,7 +243,7 @@ def mcp_list():
                 transport = "http"
             line = f"{name} ({transport}): {server['url']}"
             if server.get("auth") == "oauth" and not _has_oauth_tokens(server["url"]):
-                line += " [authorization required - run: kimi mcp auth " + name + "]"
+                line += " [authorization required - run: aksesa mcp auth " + name + "]"
         else:
             line = f"{name}: {server}"
         typer.echo(f"  {line}")
@@ -337,7 +337,7 @@ def mcp_test(
         try:
             async with client:
                 tools = await client.list_tools()
-                typer.echo(f"✓ Connected to '{name}'")
+                typer.echo(f"OK Connected to '{name}'")
                 typer.echo(f"  Available tools: {len(tools)}")
                 if tools:
                     typer.echo("  Tools:")
@@ -347,7 +347,7 @@ def mcp_test(
                             desc = desc[:47] + "..."
                         typer.echo(f"    - {tool.name}: {desc}")
         except Exception as e:
-            typer.echo(f"✗ Connection failed: {type(e).__name__}: {e}", err=True)
+            typer.echo(f"FAIL Connection failed: {type(e).__name__}: {e}", err=True)
             raise typer.Exit(code=1) from None
 
     asyncio.run(_test())
