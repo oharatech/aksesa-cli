@@ -84,7 +84,7 @@ def _make_scripted_config(
                 "type": "_scripted_echo",
                 "base_url": "",
                 "api_key": "",
-                "env": {"KIMI_SCRIPTED_ECHO_SCRIPTS": str(scripts_path)},
+                "env": {"AKSESA_SCRIPTED_ECHO_SCRIPTS": str(scripts_path)},
             }
         },
     }

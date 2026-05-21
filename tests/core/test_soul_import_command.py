@@ -61,7 +61,7 @@ async def test_export_writes_file_and_sends_wire(tmp_path: Path, monkeypatch) ->
 
     assert output.exists()
     content = output.read_text(encoding="utf-8")
-    assert "# Kimi Session Export" in content
+    assert "# Aksesa Session Export" in content
     assert "Hello" in content
 
     # Should send export path + sensitive info warning

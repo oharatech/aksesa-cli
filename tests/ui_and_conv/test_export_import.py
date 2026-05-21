@@ -854,7 +854,7 @@ class TestPerformExport:
         assert count == 2
         assert output.exists()
         content = output.read_text()
-        assert "# Kimi Session Export" in content
+        assert "# Aksesa Session Export" in content
         assert "Hello" in content
 
     async def test_uses_default_dir_when_no_args(self, tmp_path: Path) -> None:
@@ -869,7 +869,7 @@ class TestPerformExport:
         assert isinstance(result, tuple)
         path, _ = result
         assert path.parent == tmp_path
-        assert path.name.startswith("kimi-export-abc12345")
+        assert path.name.startswith("aksesa-export-abc12345")
         assert path.name.endswith(".md")
 
     async def test_dir_arg_appends_default_name(self, tmp_path: Path) -> None:
@@ -884,7 +884,7 @@ class TestPerformExport:
         assert isinstance(result, tuple)
         path, _ = result
         assert path.parent == tmp_path
-        assert path.name.startswith("kimi-export-abc12345")
+        assert path.name.startswith("aksesa-export-abc12345")
 
     async def test_trailing_separator_uses_directory_semantics_when_missing(
         self, tmp_path: Path
@@ -901,7 +901,7 @@ class TestPerformExport:
         assert isinstance(result, tuple)
         path, _ = result
         assert path.parent == export_dir
-        assert path.name.startswith("kimi-export-abc12345")
+        assert path.name.startswith("aksesa-export-abc12345")
         assert export_dir.exists() and export_dir.is_dir()
         assert path.exists()
 
@@ -1153,7 +1153,7 @@ class TestPerformExportEdgeCases:
         path, count = result
         assert count == 2
         content = path.read_text()
-        assert "# Kimi Session Export" in content
+        assert "# Aksesa Session Export" in content
 
 
 # ---------------------------------------------------------------------------

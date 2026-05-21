@@ -124,7 +124,7 @@ def acp_share_dir(tmp_path: Path) -> Path:
                 "base_url": "",
                 "api_key": "",
                 "env": {
-                    "KIMI_SCRIPTED_ECHO_SCRIPTS": str(scripts_path),
+                    "AKSESA_SCRIPTED_ECHO_SCRIPTS": str(scripts_path),
                     "KIMI_SCRIPTED_ECHO_TRACE": trace_env,
                 },
             }

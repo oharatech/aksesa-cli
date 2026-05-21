@@ -208,7 +208,7 @@ def test_scripted_echo_media_e2e(temp_work_dir: KaosPath, tmp_path: Path, mode: 
                 "base_url": "",
                 "api_key": "",
                 "env": {
-                    "KIMI_SCRIPTED_ECHO_SCRIPTS": str(scripts_path),
+                    "AKSESA_SCRIPTED_ECHO_SCRIPTS": str(scripts_path),
                     "KIMI_SCRIPTED_ECHO_TRACE": trace_env,
                 },
             }

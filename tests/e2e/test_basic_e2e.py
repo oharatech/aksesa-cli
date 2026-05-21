@@ -283,7 +283,7 @@ async def test_scripted_echo_aksesa_cli_agent_e2e(
                 "base_url": "",
                 "api_key": "",
                 "env": {
-                    "KIMI_SCRIPTED_ECHO_SCRIPTS": str(scripts_path),
+                    "AKSESA_SCRIPTED_ECHO_SCRIPTS": str(scripts_path),
                     "KIMI_SCRIPTED_ECHO_TRACE": trace_env,
                 },
             }

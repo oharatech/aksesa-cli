@@ -40,7 +40,7 @@ async def test_export_writes_markdown_file(tmp_path: Path) -> None:
 
     assert output.exists()
     content = output.read_text(encoding="utf-8")
-    assert "# Kimi Session Export" in content
+    assert "# Aksesa Session Export" in content
     assert "session_id: curr-session-id" in content
     assert "Hello" in content
     assert "Hi!" in content
