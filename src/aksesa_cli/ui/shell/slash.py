@@ -177,7 +177,7 @@ def version(app: Shell, args: str):
     """Show version information"""
     from aksesa_cli.constant import VERSION
 
-    console.print(f"kimi, version {VERSION}")
+    console.print(f"aksesa, version {VERSION}")
 
 
 @registry.command

@@ -62,18 +62,6 @@ PLATFORMS: list[Platform] = [
         name="Aksesa",
         base_url=_aksesa_base_url(),
     ),
-    Platform(
-        id="moonshot-cn",
-        name="Moonshot AI Open Platform (moonshot.cn)",
-        base_url="https://api.moonshot.cn/v1",
-        allowed_prefixes=["kimi-k"],
-    ),
-    Platform(
-        id="moonshot-ai",
-        name="Moonshot AI Open Platform (moonshot.ai)",
-        base_url="https://api.moonshot.ai/v1",
-        allowed_prefixes=["kimi-k"],
-    ),
 ]
 
 _PLATFORM_BY_ID = {platform.id: platform for platform in PLATFORMS}
