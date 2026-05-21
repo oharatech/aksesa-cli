@@ -1,6 +1,6 @@
 [project]
 name = "aksesa-cli"
-version = "1.44.1"
+version = "1.44.2"
 description = "Aksesa CLI is your next CLI agent."
 readme = "README.md"
 requires-python = ">=3.12"
