@@ -168,9 +168,15 @@ MoonshotFetchConfig = AksesaFetchConfig
 class Services(BaseModel):
     """Services configuration."""
 
-    aksesa_search: AksesaSearchConfig | None = Field(None, alias="moonshot_search")
+    aksesa_search: AksesaSearchConfig | None = Field(
+        default=None,
+        validation_alias=AliasChoices("aksesa_search", "moonshot_search"),
+    )
     """Aksesa Search configuration."""
-    aksesa_fetch: AksesaFetchConfig | None = Field(None, alias="moonshot_fetch")
+    aksesa_fetch: AksesaFetchConfig | None = Field(
+        default=None,
+        validation_alias=AliasChoices("aksesa_fetch", "moonshot_fetch"),
+    )
     """Aksesa Fetch configuration."""
 
     model_config = ConfigDict(populate_by_name=True)
@@ -244,7 +250,9 @@ class Config(BaseModel):
     notifications: NotificationConfig = Field(
         default_factory=NotificationConfig, description="Notification configuration"
     )
-    services: Services = Field(default_factory=Services, description="Services configuration")
+    services: Services = Field(  # pyright: ignore[reportArgumentType]
+        default_factory=Services, description="Services configuration"
+    )
     mcp: MCPConfig = Field(default_factory=MCPConfig, description="MCP configuration")
     hooks: list[HookDef] = Field(default_factory=list, description="Hook definitions")  # pyright: ignore[reportUnknownVariableType]
     merge_all_available_skills: bool = Field(
@@ -294,7 +302,7 @@ def get_default_config() -> Config:
         default_model="",
         models={},
         providers={},
-        services=Services(),
+        services=Services(),  # pyright: ignore[reportCallIssue]
     )
 
 

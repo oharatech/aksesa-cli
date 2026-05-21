@@ -55,7 +55,7 @@ from aksesa_cli.wire.file import WireFile
 def config() -> Config:
     """Create a Config instance."""
     conf = get_default_config()
-    conf.services.moonshot_search = MoonshotSearchConfig(
+    conf.services.aksesa_search = MoonshotSearchConfig(
         base_url="https://api.kimi.com/coding/v1/search",
         api_key=SecretStr("test-api-key"),
     )

@@ -253,7 +253,7 @@ async def test_fetch_url_with_service(runtime) -> None:
         # Configure tool with service
         config = Config(
             services=Services(
-                moonshot_fetch=MoonshotFetchConfig(
+                aksesa_fetch=MoonshotFetchConfig(
                     base_url=service_url,
                     api_key=SecretStr("test-key"),
                     custom_headers={"X-Custom-Header": "custom-value"},
