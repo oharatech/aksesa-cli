@@ -64,6 +64,8 @@ jobs:
     env:
       KIMI_WEB_STRICT_VERSION: "1"
       KIMI_WEB_EXPECT_VERSION: ${{ github.ref_name }}
+      APPLE_CERTIFICATE_P12: ${{ secrets.APPLE_CERTIFICATE_P12 }}
+      APPLE_NOTARIZATION_KEY_P8: ${{ secrets.APPLE_NOTARIZATION_KEY_P8 }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -98,7 +100,7 @@ jobs:
 
       # macOS: Setup signing certificate before build
       - name: Setup macOS signing certificate
-        if: runner.os == 'macOS' && secrets.APPLE_CERTIFICATE_P12 != ''
+        if: runner.os == 'macOS' && env.APPLE_CERTIFICATE_P12 != ''
         env:
           APPLE_CERTIFICATE_P12: ${{ secrets.APPLE_CERTIFICATE_P12 }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -199,7 +201,7 @@ jobs:
 
       # macOS: Notarize onefile binary
       - name: Notarize macOS onefile binary
-        if: runner.os == 'macOS' && env.APPLE_SIGNING_IDENTITY != '' && secrets.APPLE_NOTARIZATION_KEY_P8 != ''
+        if: runner.os == 'macOS' && env.APPLE_SIGNING_IDENTITY != '' && env.APPLE_NOTARIZATION_KEY_P8 != ''
         env:
           APPLE_NOTARIZATION_KEY_P8: ${{ secrets.APPLE_NOTARIZATION_KEY_P8 }}
           APPLE_NOTARIZATION_KEY_ID: ${{ secrets.APPLE_NOTARIZATION_KEY_ID }}
@@ -257,7 +259,7 @@ jobs:
 
       # macOS: Notarize onedir binaries
       - name: Notarize macOS onedir binaries
-        if: runner.os == 'macOS' && env.APPLE_SIGNING_IDENTITY != '' && secrets.APPLE_NOTARIZATION_KEY_P8 != ''
+        if: runner.os == 'macOS' && env.APPLE_SIGNING_IDENTITY != '' && env.APPLE_NOTARIZATION_KEY_P8 != ''
         env:
           APPLE_NOTARIZATION_KEY_P8: ${{ secrets.APPLE_NOTARIZATION_KEY_P8 }}
           APPLE_NOTARIZATION_KEY_ID: ${{ secrets.APPLE_NOTARIZATION_KEY_ID }}
