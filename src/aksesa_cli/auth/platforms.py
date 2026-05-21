@@ -281,7 +281,7 @@ async def _list_models(
         result.append(
             ModelInfo(
                 id=str(model_id),
-                context_length=int(item.get("context_length") or 0),
+                context_length=int(item.get("context_length") or 0) or 128000,
                 supports_reasoning=bool(item.get("supports_reasoning")),
                 supports_image_in=bool(item.get("supports_image_in")),
                 supports_video_in=bool(item.get("supports_video_in")),

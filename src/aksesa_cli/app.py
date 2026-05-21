@@ -751,7 +751,7 @@ class KimiCLI:
                 welcome_info.append(
                     WelcomeInfoItem(
                         name="Tip",
-                        value="send /login to use Kimi for Coding",
+                        value="send /login to use Aksesa",
                         level=WelcomeInfoItem.Level.WARN,
                     )
                 )
@@ -760,7 +760,7 @@ class KimiCLI:
                 name="\nTip",
                 value=(
                     "Spot a bug or have feedback? Type /feedback right in this session"
-                    " — every report makes Kimi better."
+                    " — every report makes Aksesa better."
                 ),
                 level=WelcomeInfoItem.Level.INFO,
             )
