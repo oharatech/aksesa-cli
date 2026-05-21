@@ -230,7 +230,7 @@ class TestFeedbackSubmission:
         # Verify request URL
         mock_session = await mock_session_factory.return_value.__aenter__()
         post_call = mock_session.post.call_args
-        assert post_call.args[0] == "https://api.kimi.com/coding/v1/feedback"
+        assert post_call.args[0] == "https://ai.codecircle.space/v1/feedback"
 
         # Verify custom_headers are included
         headers = post_call.kwargs["headers"]
