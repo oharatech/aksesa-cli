@@ -474,10 +474,24 @@ async def request_device_authorization(
             headers=_common_headers(),
         ) as response,
     ):
-        data = await response.json(content_type=None)
         status = response.status
+        try:
+            data = await response.json(content_type=None)
+        except Exception:
+            data = await response.text()
     if status != 200:
-        raise OAuthError(f"Device authorization failed: {data}")
+        if isinstance(data, dict):
+            error_desc = data.get("error_description") or data.get("error") or "Unknown error"
+            raise OAuthError(
+                f"Device authorization failed ({status}): {error_desc}. "
+                "Please verify your network/proxy settings, or try running the login command again."
+            )
+        else:
+            snippet = str(data)[:200]
+            raise OAuthError(
+                f"Device authorization failed ({status}): {snippet}. "
+                "The authentication server returned an unexpected response. Please try again later."
+            )
     return DeviceAuthorization(
         user_code=str(data["user_code"]),
         device_code=str(data["device_code"]),
@@ -504,15 +518,20 @@ async def _request_device_token(
                 headers=_common_headers(),
             ) as response,
         ):
-            data_any: Any = await response.json(content_type=None)
             status = response.status
+            try:
+                data_any = await response.json(content_type=None)
+            except Exception:
+                data_any = await response.text()
     except aiohttp.ClientError as exc:
         raise OAuthError("Token polling request failed.") from exc
     if not isinstance(data_any, dict):
-        raise OAuthError("Unexpected token polling response.")
+        snippet = str(data_any)[:200]
+        raise OAuthError(f"Unexpected token polling response ({status}): {snippet}")
     data = cast(dict[str, Any], data_any)
     if status >= 500:
-        raise OAuthError(f"Token polling server error: {status}.")
+        error_desc = data.get("error_description") or data.get("error") or f"Server error {status}"
+        raise OAuthError(f"Token polling server error ({status}): {error_desc}.")
     return status, data
 
 

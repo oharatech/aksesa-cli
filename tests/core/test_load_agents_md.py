@@ -174,3 +174,33 @@ async def test_max_bytes_leaf_prioritised(temp_work_dir: KaosPath):
     assert content.count("A") < root_size
     # Total output (including annotations) must not exceed the limit
     assert len(content.encode()) <= _AGENTS_MD_MAX_BYTES
+
+
+# ---------------------------------------------------------------------------
+# .aksesa/ directory
+# ---------------------------------------------------------------------------
+
+
+async def test_aksesa_dir_loaded(temp_work_dir: KaosPath):
+    """.aksesa/AGENTS.md is loaded; prioritized/coexists with .kimi/ and root agents."""
+    aksesa_dir = temp_work_dir / ".aksesa"
+    await aksesa_dir.mkdir()
+    await (aksesa_dir / "AGENTS.md").write_text("aksesa agents")
+
+    kimi_dir = temp_work_dir / ".kimi"
+    await kimi_dir.mkdir()
+    await (kimi_dir / "AGENTS.md").write_text("kimi agents")
+
+    await (temp_work_dir / "AGENTS.md").write_text("root agents")
+
+    content = await load_agents_md(temp_work_dir)
+
+    assert content is not None
+    assert "aksesa agents" in content
+    assert "kimi agents" in content
+    assert "root agents" in content
+
+    # Check order: .aksesa/ first, then .kimi/, then root
+    assert content.index("aksesa agents") < content.index("kimi agents")
+    assert content.index("kimi agents") < content.index("root agents")
+    assert content.count("<!-- From:") == 3

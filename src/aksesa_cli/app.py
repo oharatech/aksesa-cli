@@ -58,7 +58,7 @@ def enable_logging(debug: bool = False, *, redirect_stderr: bool = True) -> None
     if debug:
         logger.enable("kosong")
     logger.add(
-        get_share_dir() / "logs" / "kimi.log",
+        get_share_dir() / "logs" / "aksesa.log",
         # FIXME: configure level for different modules
         level="TRACE" if debug else "INFO",
         format=(
@@ -222,7 +222,7 @@ class KimiCLI:
 
         if not model:
             model = LLMModel(provider="", model="", max_context_size=100_000)
-            provider = LLMProvider(type="kimi", base_url="", api_key=SecretStr(""))
+            provider = LLMProvider(type="openai_legacy", base_url="", api_key=SecretStr(""))
 
         # try overwrite with environment variables
         assert provider is not None

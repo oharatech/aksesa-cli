@@ -15,7 +15,7 @@ from aksesa_cli.utils.logging import logger
 
 
 def get_metadata_file() -> Path:
-    return get_share_dir() / "kimi.json"
+    return get_share_dir() / "aksesa.json"
 
 
 class WorkDirMeta(BaseModel):

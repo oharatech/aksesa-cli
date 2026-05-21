@@ -170,7 +170,7 @@ wheels = [
 
 [[package]]
 name = "aksesa-cli"
-version = "1.44.0"
+version = "1.44.3"
 source = { editable = "." }
 dependencies = [
     { name = "agent-client-protocol" },
@@ -1374,7 +1374,7 @@ wheels = [
 
 [[package]]
 name = "kimi-code"
-version = "1.44.0"
+version = "1.44.3"
 source = { editable = "packages/kimi-code" }
 dependencies = [
     { name = "aksesa-cli" },

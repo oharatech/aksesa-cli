@@ -108,12 +108,15 @@ async def load_agents_md(work_dir: KaosPath) -> str | None:
     # Phase 1: collect all candidate files (root → leaf order)
     discovered: list[tuple[KaosPath, str]] = []  # (path, content)
     for d in dirs:
-        # .kimi/AGENTS.md is always checked independently (can coexist with root-level file)
+        # .aksesa/AGENTS.md and .kimi/AGENTS.md are checked independently (can coexist)
+        aksesa_path = d / ".aksesa" / "AGENTS.md"
         kimi_path = d / ".kimi" / "AGENTS.md"
         # AGENTS.md and agents.md are mutually exclusive (uppercase wins)
         root_candidates = [d / "AGENTS.md", d / "agents.md"]
 
         candidates: list[KaosPath] = []
+        if await aksesa_path.is_file():
+            candidates.append(aksesa_path)
         if await kimi_path.is_file():
             candidates.append(kimi_path)
         for rc in root_candidates:

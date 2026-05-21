@@ -432,6 +432,22 @@ async def test_find_user_skills_dirs_brand_group_prefers_kimi_over_claude(monkey
 
 
 @pytest.mark.asyncio
+async def test_find_user_skills_dirs_brand_group_prefers_aksesa_over_kimi(monkeypatch, tmp_path):
+    """Brand group: ~/.aksesa/skills takes priority over ~/.kimi/skills."""
+    home_dir = tmp_path / "home"
+    aksesa_dir = home_dir / ".aksesa" / "skills"
+    aksesa_dir.mkdir(parents=True)
+    kimi_dir = home_dir / ".kimi" / "skills"
+    kimi_dir.mkdir(parents=True)
+    monkeypatch.setattr(Path, "home", lambda: home_dir)
+
+    dirs = await find_user_skills_dirs()
+    # Only aksesa should be selected (first existing in brand group)
+    assert KaosPath.unsafe_from_local_path(aksesa_dir) in dirs
+    assert KaosPath.unsafe_from_local_path(kimi_dir) not in dirs
+
+
+@pytest.mark.asyncio
 async def test_find_project_skills_dirs_merge(tmp_path):
     """Project layer: brand + generic dirs both returned."""
     work_dir = tmp_path / "project"
@@ -458,6 +474,20 @@ async def test_find_project_skills_dirs_brand_prefers_kimi(tmp_path):
     dirs = await find_project_skills_dirs(KaosPath.unsafe_from_local_path(work_dir))
     assert len(dirs) == 1
     assert dirs[0] == KaosPath.unsafe_from_local_path(kimi_dir)
+
+
+@pytest.mark.asyncio
+async def test_find_project_skills_dirs_brand_prefers_aksesa(tmp_path):
+    """Project layer brand group: .aksesa/skills wins over .kimi/skills."""
+    work_dir = tmp_path / "project"
+    aksesa_dir = work_dir / ".aksesa" / "skills"
+    aksesa_dir.mkdir(parents=True)
+    kimi_dir = work_dir / ".kimi" / "skills"
+    kimi_dir.mkdir(parents=True)
+
+    dirs = await find_project_skills_dirs(KaosPath.unsafe_from_local_path(work_dir))
+    assert len(dirs) == 1
+    assert dirs[0] == KaosPath.unsafe_from_local_path(aksesa_dir)
 
 
 @pytest.mark.asyncio

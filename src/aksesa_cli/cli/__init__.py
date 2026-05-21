@@ -167,7 +167,7 @@ def kimi(
             file_okay=True,
             dir_okay=False,
             readable=True,
-            help="Config TOML/JSON file to load. Default: ~/.kimi/config.toml.",
+            help="Config TOML/JSON file to load. Default: ~/.aksesa/config.toml.",
         ),
     ] = None,
     model_name: Annotated[
@@ -730,7 +730,7 @@ def kimi(
     def _print_resume_hint(session: Session) -> None:
         """Print a hint for resuming the session after exit."""
         if not session.is_empty():
-            _emit_fatal_error(f"\nTo resume this session: kimi -r {session.id}")
+            _emit_fatal_error(f"\nTo resume this session: aksesa -r {session.id}")
 
     async def _post_run(last_session: Session, exit_code: int) -> None:
         _print_resume_hint(last_session)
@@ -866,12 +866,12 @@ def kimi(
         else:
             from aksesa_cli.share import get_share_dir
 
-            log_path = get_share_dir() / "logs" / "kimi.log"
+            log_path = get_share_dir() / "logs" / "aksesa.log"
             # In non-debug mode, print a concise error and point users to logs.
             _emit_fatal_error(
                 f"{exc}\n"
                 f"See logs: {log_path}\n"
-                "Run with --debug for full traceback, or run kimi export to share diagnostics."
+                "Run with --debug for full traceback, or run aksesa export to share diagnostics."
             )
         raise typer.Exit(code=1) from exc
     if switch_target in ("web", "vis"):

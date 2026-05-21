@@ -5,7 +5,9 @@ from __future__ import annotations
 import secrets
 from pathlib import Path
 
-PLANS_DIR = Path.home() / ".kimi" / "plans"
+from aksesa_cli.share import get_share_dir
+
+PLANS_DIR = get_share_dir() / "plans"
 
 HERO_NAMES: list[str] = [
     # --- Marvel ---
