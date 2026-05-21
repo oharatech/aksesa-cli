@@ -37,7 +37,7 @@ shell_mode_registry = SlashCommandRegistry[ShellSlashCmdFunc]()
 
 def ensure_kimi_soul(app: Shell) -> KimiSoul | None:
     if not isinstance(app.soul, KimiSoul):
-        console.print("[red]KimiSoul required[/red]")
+        console.print("[red]AksesaSoul required[/red]")
         return None
     return app.soul
 
@@ -453,7 +453,7 @@ async def feedback(app: Shell, args: str):
     from aksesa_cli.ui.shell.oauth import current_model_key
     from aksesa_cli.utils.aiohttp import new_client_session
 
-    ISSUE_URL = "https://github.com/MoonshotAI/kimi-cli/issues"
+    ISSUE_URL = "https://github.com/oharatech/aksesa-cli/issues"
 
     def _fallback_to_issues():
         if not webbrowser.open(ISSUE_URL):

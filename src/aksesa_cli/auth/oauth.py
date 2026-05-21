@@ -33,8 +33,8 @@ from aksesa_cli.config import (
     Config,
     LLMModel,
     LLMProvider,
-    MoonshotFetchConfig,
-    MoonshotSearchConfig,
+    AksesaFetchConfig,
+    AksesaSearchConfig,
     OAuthRef,
     save_config,
 )
@@ -650,14 +650,14 @@ def _apply_platform_config(
     config.default_thinking = thinking
 
     if platform.search_url:
-        config.services.moonshot_search = MoonshotSearchConfig(
+        config.services.aksesa_search = AksesaSearchConfig(
             base_url=platform.search_url,
             api_key=SecretStr(""),
             oauth=oauth_ref,
         )
 
     if platform.fetch_url:
-        config.services.moonshot_fetch = MoonshotFetchConfig(
+        config.services.aksesa_fetch = AksesaFetchConfig(
             base_url=platform.fetch_url,
             api_key=SecretStr(""),
             oauth=oauth_ref,
@@ -819,8 +819,8 @@ async def _logout_platform(
     if removed_default:
         config.default_model = ""
 
-    config.services.moonshot_search = None
-    config.services.moonshot_fetch = None
+    config.services.aksesa_search = None
+    config.services.aksesa_fetch = None
 
     save_config(config)
     yield OAuthEvent("success", "Logged out successfully.")
@@ -851,8 +851,8 @@ class OAuthManager:
             if provider.oauth:
                 refs.append(provider.oauth)
         for service in (
-            self._config.services.moonshot_search,
-            self._config.services.moonshot_fetch,
+            self._config.services.aksesa_search,
+            self._config.services.aksesa_fetch,
         ):
             if service and service.oauth:
                 refs.append(service.oauth)
@@ -877,8 +877,8 @@ class OAuthManager:
                 provider.oauth = _migrate_ref(provider.oauth)
 
         for service in (
-            self._config.services.moonshot_search,
-            self._config.services.moonshot_fetch,
+            self._config.services.aksesa_search,
+            self._config.services.aksesa_fetch,
         ):
             if service and service.oauth:
                 service.oauth = _migrate_ref(service.oauth)
@@ -956,8 +956,8 @@ class OAuthManager:
             if provider.oauth and provider.oauth.key == key:
                 return provider.oauth
         for service in (
-            self._config.services.moonshot_search,
-            self._config.services.moonshot_fetch,
+            self._config.services.aksesa_search,
+            self._config.services.aksesa_fetch,
         ):
             if service and service.oauth and service.oauth.key == key:
                 return service.oauth

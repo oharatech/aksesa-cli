@@ -21,7 +21,7 @@ from aksesa_cli.ui.shell.console import console
 from aksesa_cli.utils.aiohttp import new_client_session
 from aksesa_cli.utils.logging import logger
 
-BASE_URL = "https://cdn.kimi.com/binaries/kimi-cli"
+BASE_URL = "https://cdn.aksesa.dev/binaries/aksesa-cli"
 LATEST_VERSION_URL = f"{BASE_URL}/latest"
 INSTALL_DIR = Path.home() / ".local" / "bin"
 
@@ -91,8 +91,8 @@ async def do_update(*, print: bool = True, check_only: bool = False) -> UpdateRe
 
 LATEST_VERSION_FILE = get_share_dir() / "latest_version.txt"
 SKIPPED_VERSION_FILE = get_share_dir() / "skipped_version.txt"
-CHANGELOG_URL_ZH = "https://moonshotai.github.io/kimi-cli/zh/release-notes/changelog.html"
-CHANGELOG_URL_EN = "https://moonshotai.github.io/kimi-cli/en/release-notes/changelog.html"
+CHANGELOG_URL_ZH = "https://github.com/oharatech/aksesa-cli/releases"
+CHANGELOG_URL_EN = "https://github.com/oharatech/aksesa-cli/releases"
 
 
 def _read_key() -> str:
@@ -123,7 +123,7 @@ def check_update_gate() -> None:
     from aksesa_cli.constant import VERSION as current_version
     from aksesa_cli.utils.envvar import get_env_bool
 
-    if get_env_bool("KIMI_CLI_NO_AUTO_UPDATE"):
+    if get_env_bool("AKSESA_CLI_NO_AUTO_UPDATE"):
         return
     if not sys.stdin.isatty() or not sys.stdout.isatty():
         return
@@ -171,7 +171,7 @@ def _run_update_gate(current_version: str, latest_version: str) -> None:
     console.print(
         Panel(
             body,
-            title="[bold]kimi-cli update available[/bold]",
+            title="[bold]aksesa-cli update available[/bold]",
             border_style="yellow",
             expand=False,
             padding=(1, 2),
@@ -207,7 +207,9 @@ def _run_update_gate(current_version: str, latest_version: str) -> None:
             sys.exit(1)
         console.print()
         if result.returncode == 0:
-            console.print("[green]Upgrade complete! Run kimi-cli to start the new version.[/green]")
+            console.print(
+                "[green]Upgrade complete! Restart aksesa-cli to use the new version.[/green]"
+            )
         else:
             console.print("[red]Upgrade failed. Please try running manually:[/red]")
             console.print(f"  {UPGRADE_COMMAND}")

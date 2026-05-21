@@ -1,4 +1,4 @@
-"""Kimi Agent Tracing Visualizer application."""
+"""Aksesa Agent Tracing Visualizer application."""
 
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ STATIC_DIR = Path(__file__).parent / "static"
 GZIP_MINIMUM_SIZE = 1024
 GZIP_COMPRESSION_LEVEL = 6
 DEFAULT_PORT = 5495
-_ENV_RESTRICT_OPEN_IN = "KIMI_VIS_RESTRICT_OPEN_IN"
+_ENV_RESTRICT_OPEN_IN = "AKSESA_VIS_RESTRICT_OPEN_IN"
 
 
 def create_app() -> FastAPI:
@@ -37,7 +37,7 @@ def create_app() -> FastAPI:
     }
 
     application = FastAPI(
-        title="Kimi Agent Tracing Visualizer",
+        title="Aksesa Agent Tracing Visualizer",
         docs_url=None,
         separate_input_output_schemas=False,
     )
@@ -96,7 +96,7 @@ def run_vis_server(
     # Disable open-in API when exposed to the network (security)
     os.environ[_ENV_RESTRICT_OPEN_IN] = "1" if public_mode else "0"
 
-    # Build display hosts (same logic as kimi web)
+    # Build display hosts (same logic as aksesa web)
     display_hosts: list[tuple[str, str]] = []
     if host == "0.0.0.0":
         display_hosts.append(("Local", "localhost"))
@@ -143,7 +143,7 @@ def run_vis_server(
         banner_lines.extend(
             [
                 "<nowrap>  This feature is in Technical Preview and may be unstable.",
-                "<nowrap>  Please report issues to the kimi-cli team.",
+                "<nowrap>  Please report issues to the aksesa-cli team.",
                 "",
             ]
         )

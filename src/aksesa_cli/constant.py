@@ -55,7 +55,7 @@ def get_build_sha() -> str:
     3. git remote + git rev-parse HEAD from the package directory (dev mode)
     4. Empty string (fallback)
     """
-    if build_id := os.environ.get("KIMI_BUILD_SHA", "").strip():
+    if build_id := os.environ.get("AKSESA_BUILD_SHA", "").strip():
         return build_id
 
     try:

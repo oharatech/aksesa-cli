@@ -58,11 +58,11 @@ GZIP_MINIMUM_SIZE = 1024
 GZIP_COMPRESSION_LEVEL = 6
 DEFAULT_PORT = 5494
 MAX_PORT_ATTEMPTS = 10
-ENV_SESSION_TOKEN = "KIMI_WEB_SESSION_TOKEN"
-ENV_ALLOWED_ORIGINS = "KIMI_WEB_ALLOWED_ORIGINS"
-ENV_ENFORCE_ORIGIN = "KIMI_WEB_ENFORCE_ORIGIN"
-ENV_RESTRICT_SENSITIVE_APIS = "KIMI_WEB_RESTRICT_SENSITIVE_APIS"
-ENV_MAX_PUBLIC_PATH_DEPTH = "KIMI_WEB_MAX_PUBLIC_PATH_DEPTH"
+ENV_SESSION_TOKEN = "AKSESA_WEB_SESSION_TOKEN"
+ENV_ALLOWED_ORIGINS = "AKSESA_WEB_ALLOWED_ORIGINS"
+ENV_ENFORCE_ORIGIN = "AKSESA_WEB_ENFORCE_ORIGIN"
+ENV_RESTRICT_SENSITIVE_APIS = "AKSESA_WEB_RESTRICT_SENSITIVE_APIS"
+ENV_MAX_PUBLIC_PATH_DEPTH = "AKSESA_WEB_MAX_PUBLIC_PATH_DEPTH"
 
 # Cache durations
 _IMMUTABLE_MAX_AGE = 365 * 24 * 3600  # 1 year for content-hashed assets
@@ -109,7 +109,7 @@ def _load_env_flag(key: str) -> bool:
     return os.environ.get(key, "").strip().lower() in {"1", "true", "yes", "on"}
 
 
-ENV_LAN_ONLY = "KIMI_WEB_LAN_ONLY"
+ENV_LAN_ONLY = "AKSESA_WEB_LAN_ONLY"
 
 
 def create_app(
@@ -120,7 +120,7 @@ def create_app(
     max_public_path_depth: int | None = None,
     lan_only: bool | None = None,
 ) -> FastAPI:
-    """Create the FastAPI application for Kimi CLI web UI."""
+    """Create the FastAPI application for Aksesa CLI web UI."""
 
     env_token = os.environ.get(ENV_SESSION_TOKEN) or None
     env_origins = normalize_allowed_origins(os.environ.get(ENV_ALLOWED_ORIGINS))

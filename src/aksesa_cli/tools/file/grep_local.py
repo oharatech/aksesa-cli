@@ -138,7 +138,7 @@ class Params(BaseModel):
 
 
 RG_VERSION = "15.0.0"
-RG_BASE_URL = "http://cdn.kimi.com/binaries/kimi-cli/rg"
+RG_BASE_URL = "http://cdn.aksesa.dev/binaries/aksesa-cli/rg"
 RG_TIMEOUT = 20  # seconds
 RG_MAX_BUFFER = 20_000_000  # 20MB stdout/stderr buffer limit
 RG_KILL_GRACE = 5  # seconds: SIGTERM → SIGKILL
@@ -209,7 +209,7 @@ async def _download_and_install_rg(bin_name: str) -> Path:
     # Downloading the ripgrep binary can be slow on constrained networks.
     download_timeout = aiohttp.ClientTimeout(total=600, sock_read=60, sock_connect=15)
     async with new_client_session(timeout=download_timeout) as session:
-        with tempfile.TemporaryDirectory(prefix="kimi-rg-") as tmpdir:
+        with tempfile.TemporaryDirectory(prefix="aksesa-rg-") as tmpdir:
             tar_path = Path(tmpdir) / filename
 
             try:

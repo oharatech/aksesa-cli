@@ -1,10 +1,10 @@
-"""Vis command for Kimi Agent Tracing Visualizer."""
+"""Vis command for Aksesa Agent Tracing Visualizer."""
 
 from typing import Annotated
 
 import typer
 
-cli = typer.Typer(help="Run Kimi Agent Tracing Visualizer.")
+cli = typer.Typer(help="Run Aksesa Agent Tracing Visualizer.")
 
 
 @cli.callback(invoke_without_command=True)
@@ -27,7 +27,7 @@ def vis(
     """Launch the agent tracing visualizer."""
     from aksesa_cli.vis.app import run_vis_server
 
-    # Determine bind address (same logic as kimi web)
+    # Determine bind address (same logic as aksesa web)
     if host:
         bind_host = host
     elif network:

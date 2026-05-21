@@ -40,7 +40,7 @@ class StderrRedirector:
             os.close(write_fd)
             self._read_fd = read_fd
             self._thread = threading.Thread(
-                target=self._drain, name="kimi-stderr-redirect", daemon=True
+                target=self._drain, name="aksesa-stderr-redirect", daemon=True
             )
             self._thread.start()
             self._installed = True

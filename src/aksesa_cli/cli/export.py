@@ -153,7 +153,7 @@ def _collect_recent_log_files(session_dir: Path) -> list[Path]:
     # Collect candidates with (mtime, size, path)
     candidates: list[tuple[float, int, Path]] = []
     for f in log_dir.iterdir():
-        if not f.is_file() or not f.name.startswith("kimi.") or not f.name.endswith(".log"):
+        if not f.is_file() or not f.name.startswith("aksesa.") or not f.name.endswith(".log"):
             continue
         try:
             st = f.stat()

@@ -66,26 +66,26 @@ def augment_provider_with_env_vars(provider: LLMProvider, model: LLMModel) -> di
 
     match provider.type:
         case "kimi":
-            if base_url := os.getenv("KIMI_BASE_URL"):
+            if base_url := os.getenv("AKSESA_BASE_URL"):
                 provider.base_url = base_url
-                applied["KIMI_BASE_URL"] = base_url
-            if api_key := os.getenv("KIMI_API_KEY"):
+                applied["AKSESA_BASE_URL"] = base_url
+            if api_key := os.getenv("AKSESA_API_KEY"):
                 provider.api_key = SecretStr(api_key)
-                applied["KIMI_API_KEY"] = "******"
-            if model_name := os.getenv("KIMI_MODEL_NAME"):
+                applied["AKSESA_API_KEY"] = "******"
+            if model_name := os.getenv("AKSESA_MODEL_NAME"):
                 model.model = model_name
-                applied["KIMI_MODEL_NAME"] = model_name
-            if max_context_size := os.getenv("KIMI_MODEL_MAX_CONTEXT_SIZE"):
+                applied["AKSESA_MODEL_NAME"] = model_name
+            if max_context_size := os.getenv("AKSESA_MODEL_MAX_CONTEXT_SIZE"):
                 model.max_context_size = int(max_context_size)
-                applied["KIMI_MODEL_MAX_CONTEXT_SIZE"] = max_context_size
-            if capabilities := os.getenv("KIMI_MODEL_CAPABILITIES"):
+                applied["AKSESA_MODEL_MAX_CONTEXT_SIZE"] = max_context_size
+            if capabilities := os.getenv("AKSESA_MODEL_CAPABILITIES"):
                 caps_lower = (cap.strip().lower() for cap in capabilities.split(",") if cap.strip())
                 model.capabilities = set(
                     cast(ModelCapability, cap)
                     for cap in caps_lower
                     if cap in get_args(ModelCapability.__value__)
                 )
-                applied["KIMI_MODEL_CAPABILITIES"] = capabilities
+                applied["AKSESA_MODEL_CAPABILITIES"] = capabilities
         case "openai_legacy" | "openai_responses":
             if base_url := os.getenv("OPENAI_BASE_URL"):
                 provider.base_url = base_url
@@ -149,11 +149,11 @@ def create_llm(
             gen_kwargs: Kimi.GenerationKwargs = {}
             if session_id:
                 gen_kwargs["prompt_cache_key"] = session_id
-            if temperature := os.getenv("KIMI_MODEL_TEMPERATURE"):
+            if temperature := os.getenv("AKSESA_MODEL_TEMPERATURE"):
                 gen_kwargs["temperature"] = float(temperature)
-            if top_p := os.getenv("KIMI_MODEL_TOP_P"):
+            if top_p := os.getenv("AKSESA_MODEL_TOP_P"):
                 gen_kwargs["top_p"] = float(top_p)
-            if max_tokens := os.getenv("KIMI_MODEL_MAX_TOKENS"):
+            if max_tokens := os.getenv("AKSESA_MODEL_MAX_TOKENS"):
                 gen_kwargs["max_tokens"] = int(max_tokens)
 
             if gen_kwargs:
@@ -223,7 +223,7 @@ def create_llm(
             if provider.env:
                 os.environ.update(provider.env)
             scripts = _load_scripted_echo_scripts()
-            trace_value = os.getenv("KIMI_SCRIPTED_ECHO_TRACE", "")
+            trace_value = os.getenv("AKSESA_SCRIPTED_ECHO_TRACE", "")
             trace = trace_value.strip().lower() in {"1", "true", "yes", "on"}
             chat_provider = ScriptedEchoChatProvider(scripts, trace=trace)
         case "_chaos":
@@ -255,14 +255,14 @@ def create_llm(
         chat_provider = chat_provider.with_thinking("off")
     # If thinking is None and model doesn't always think, leave as-is (default behavior)
 
-    # Apply Moonshot-specific ``thinking.keep`` (preserved thinking) only when
+    # Apply Aksesa-specific ``thinking.keep`` (preserved thinking) only when
     # the model is actually in thinking mode; otherwise the API would see a
     # ``thinking.keep`` without an accompanying ``thinking.type`` it honors.
     if thinking_on and provider.type == "kimi":
         from kosong.chat_provider.kimi import Kimi
 
         if isinstance(chat_provider, Kimi) and (
-            thinking_keep := os.getenv("KIMI_MODEL_THINKING_KEEP")
+            thinking_keep := os.getenv("AKSESA_MODEL_THINKING_KEEP")
         ):
             chat_provider = chat_provider.with_extra_body({"thinking": {"keep": thinking_keep}})
 
@@ -315,9 +315,9 @@ def derive_model_capabilities(model: LLMModel) -> set[ModelCapability]:
 
 
 def _load_scripted_echo_scripts() -> list[str]:
-    script_path = os.getenv("KIMI_SCRIPTED_ECHO_SCRIPTS")
+    script_path = os.getenv("AKSESA_SCRIPTED_ECHO_SCRIPTS")
     if not script_path:
-        raise ValueError("KIMI_SCRIPTED_ECHO_SCRIPTS is required for _scripted_echo.")
+        raise ValueError("AKSESA_SCRIPTED_ECHO_SCRIPTS is required for _scripted_echo.")
     path = Path(script_path).expanduser()
     if not path.exists():
         raise ValueError(f"Scripted echo file not found: {path}")

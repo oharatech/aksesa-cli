@@ -271,7 +271,7 @@ def build_export_markdown(
         f"token_count: {token_count}",
         "---",
         "",
-        "# Kimi Session Export",
+        "# Aksesa Session Export",
         "",
     ]
 
@@ -475,7 +475,7 @@ async def perform_export(
 
     now = datetime.now().astimezone()
     short_id = session_id[:8]
-    default_name = f"kimi-export-{short_id}-{now.strftime('%Y%m%d-%H%M%S')}.md"
+    default_name = f"aksesa-export-{short_id}-{now.strftime('%Y%m%d-%H%M%S')}.md"
 
     cleaned = sanitize_cli_path(args)
     if cleaned:

@@ -20,8 +20,8 @@ from aksesa_cli.auth.platforms import (
 from aksesa_cli.config import (
     LLMModel,
     LLMProvider,
-    MoonshotFetchConfig,
-    MoonshotSearchConfig,
+    AksesaFetchConfig,
+    AksesaSearchConfig,
     load_config,
     save_config,
 )
@@ -157,13 +157,13 @@ def _apply_setup_result(result: _SetupResult) -> None:
     config.default_thinking = result.thinking
 
     if result.platform.search_url:
-        config.services.moonshot_search = MoonshotSearchConfig(
+        config.services.aksesa_search = AksesaSearchConfig(
             base_url=result.platform.search_url,
             api_key=result.api_key,
         )
 
     if result.platform.fetch_url:
-        config.services.moonshot_fetch = MoonshotFetchConfig(
+        config.services.aksesa_fetch = AksesaFetchConfig(
             base_url=result.platform.fetch_url,
             api_key=result.api_key,
         )

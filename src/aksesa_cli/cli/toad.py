@@ -25,11 +25,11 @@ def _default_acp_command() -> list[str]:
 
 def _default_toad_command() -> list[str]:
     if sys.version_info < (3, 14):
-        typer.echo("`kimi term` requires Python 3.14+ because Toad requires it.", err=True)
+        typer.echo("`aksesa term` requires Python 3.14+ because Toad requires it.", err=True)
         raise typer.Exit(code=1)
     if importlib.util.find_spec("toad") is None:
         typer.echo(
-            "Toad dependency is missing. Install kimi-cli with Python 3.14+ to use `kimi term`.",
+            "Toad dependency is missing. Install aksesa-cli with Python 3.14+ to use `aksesa term`.",
             err=True,
         )
         raise typer.Exit(code=1)

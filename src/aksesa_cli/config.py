@@ -8,6 +8,7 @@ import tomlkit
 from pydantic import (
     AliasChoices,
     BaseModel,
+    ConfigDict,
     Field,
     SecretStr,
     ValidationError,
@@ -125,13 +126,13 @@ class NotificationConfig(BaseModel):
     claim_stale_after_ms: int = Field(default=15_000, ge=1000)
 
 
-class MoonshotSearchConfig(BaseModel):
-    """Moonshot Search configuration."""
+class AksesaSearchConfig(BaseModel):
+    """Aksesa Search configuration."""
 
     base_url: str
-    """Base URL for Moonshot Search service."""
+    """Base URL for Aksesa Search service."""
     api_key: SecretStr
-    """API key for Moonshot Search service."""
+    """API key for Aksesa Search service."""
     custom_headers: dict[str, str] | None = None
     """Custom headers to include in API requests."""
     oauth: OAuthRef | None = None
@@ -142,13 +143,13 @@ class MoonshotSearchConfig(BaseModel):
         return v.get_secret_value()
 
 
-class MoonshotFetchConfig(BaseModel):
-    """Moonshot Fetch configuration."""
+class AksesaFetchConfig(BaseModel):
+    """Aksesa Fetch configuration."""
 
     base_url: str
-    """Base URL for Moonshot Fetch service."""
+    """Base URL for Aksesa Fetch service."""
     api_key: SecretStr
-    """API key for Moonshot Fetch service."""
+    """API key for Aksesa Fetch service."""
     custom_headers: dict[str, str] | None = None
     """Custom headers to include in API requests."""
     oauth: OAuthRef | None = None
@@ -157,15 +158,22 @@ class MoonshotFetchConfig(BaseModel):
     @field_serializer("api_key", when_used="json")
     def dump_secret(self, v: SecretStr):
         return v.get_secret_value()
+
+
+# Backward compatibility aliases
+MoonshotSearchConfig = AksesaSearchConfig
+MoonshotFetchConfig = AksesaFetchConfig
 
 
 class Services(BaseModel):
     """Services configuration."""
 
-    moonshot_search: MoonshotSearchConfig | None = None
-    """Moonshot Search configuration."""
-    moonshot_fetch: MoonshotFetchConfig | None = None
-    """Moonshot Fetch configuration."""
+    aksesa_search: AksesaSearchConfig | None = Field(None, alias="moonshot_search")
+    """Aksesa Search configuration."""
+    aksesa_fetch: AksesaFetchConfig | None = Field(None, alias="moonshot_fetch")
+    """Aksesa Fetch configuration."""
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class MCPClientConfig(BaseModel):
@@ -260,7 +268,10 @@ class Config(BaseModel):
     )
     telemetry: bool = Field(
         default=True,
-        description="Enable anonymous telemetry to help improve kimi-cli. Set to false to disable.",
+        description=(
+            "Enable anonymous telemetry to help improve aksesa-cli."
+            " Set to false to opt out."
+        ),
     )
 
     @model_validator(mode="after")

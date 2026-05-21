@@ -1,4 +1,4 @@
-"""Kimi CLI session runner."""
+"""Aksesa CLI session runner."""
 
 from aksesa_cli.web.runner.process import KimiCLIRunner
 

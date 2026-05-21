@@ -18,7 +18,7 @@ class LazySubcommandGroup(typer.core.TyperGroup):
         "export": ("aksesa_cli.cli.export", "cli", "Export session data."),
         "mcp": ("aksesa_cli.cli.mcp", "cli", "Manage MCP server configurations."),
         "plugin": ("aksesa_cli.cli.plugin", "cli", "Manage plugins."),
-        "vis": ("aksesa_cli.cli.vis", "cli", "Run Kimi Agent Tracing Visualizer."),
+        "vis": ("aksesa_cli.cli.vis", "cli", "Run Aksesa Agent Tracing Visualizer."),
         "web": ("aksesa_cli.cli.web", "cli", "Run Aksesa CLI web interface."),
     }
     lazy_command_order: tuple[str, ...] = (

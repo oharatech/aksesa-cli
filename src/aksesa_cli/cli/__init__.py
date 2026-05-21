@@ -40,8 +40,8 @@ class SwitchToVis(Exception):
 cli = typer.Typer(
     cls=LazySubcommandGroup,
     epilog="""\b\
-Documentation:        https://moonshotai.github.io/kimi-cli/\n
-LLM friendly version: https://moonshotai.github.io/kimi-cli/llms.txt""",
+Documentation:        https://github.com/oharatech/aksesa-cli\n
+LLM friendly version: https://github.com/oharatech/aksesa-cli""",
     add_completion=False,
     context_settings={"help_option_names": ["-h", "--help"]},
     help="Aksesa, your next CLI agent.",
@@ -238,7 +238,7 @@ def kimi(
         bool,
         typer.Option(
             "--acp",
-            help="(Deprecated, use `kimi acp` instead) Run as ACP server.",
+            help="(Deprecated, use `aksesa acp` instead) Run as ACP server.",
         ),
     ] = False,
     wire_mode: Annotated[
@@ -363,7 +363,7 @@ def kimi(
         ),
     ] = None,
 ):
-    """Kimi, your next CLI agent."""
+    """Aksesa, your next CLI agent."""
     import asyncio
     import contextlib
     import json

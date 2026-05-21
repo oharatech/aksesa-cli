@@ -86,13 +86,13 @@ Transport = Literal["stdio", "http"]
     Examples:\n
       \n
       # Add streamable HTTP server:\n
-      kimi mcp add --transport http context7 https://mcp.context7.com/mcp --header \"CONTEXT7_API_KEY: ctx7sk-your-key\"\n
+      aksesa mcp add --transport http context7 https://mcp.context7.com/mcp --header \"CONTEXT7_API_KEY: ctx7sk-your-key\"\n
       \n
       # Add streamable HTTP server with OAuth authorization:\n
-      kimi mcp add --transport http --auth oauth linear https://mcp.linear.app/mcp\n
+      aksesa mcp add --transport http --auth oauth linear https://mcp.linear.app/mcp\n
       \n
       # Add stdio server:\n
-      kimi mcp add --transport stdio chrome-devtools -- npx chrome-devtools-mcp@latest
+      aksesa mcp add --transport stdio chrome-devtools -- npx chrome-devtools-mcp@latest
     """.strip(),  # noqa: E501
 )
 def mcp_add(

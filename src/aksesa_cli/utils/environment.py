@@ -13,18 +13,18 @@ from kaos.path import KaosPath
 
 
 class GitBashNotFoundError(RuntimeError):
-    """Raised when kimi-cli runs on Windows but cannot locate git-bash.
+    """Raised when aksesa-cli runs on Windows but cannot locate git-bash.
 
-    git-bash (from Git for Windows) is required because kimi-cli's Shell tool
+    git-bash (from Git for Windows) is required because aksesa-cli's Shell tool
     runs commands through bash, not PowerShell.
     """
 
 
 _GIT_BASH_INSTALL_HINT = (
-    "kimi-cli on Windows requires Git for Windows (https://git-scm.com/downloads/win) "
+    "aksesa-cli on Windows requires Git for Windows (https://git-scm.com/downloads/win) "
     "for its bundled bash. If git-bash is installed but not on PATH, set the "
-    "KIMI_CLI_GIT_BASH_PATH environment variable to your bash.exe, e.g.:\n"
-    "    KIMI_CLI_GIT_BASH_PATH=C:\\Program Files\\Git\\bin\\bash.exe"
+    "AKSESA_CLI_GIT_BASH_PATH environment variable to your bash.exe, e.g.:\n"
+    "    AKSESA_CLI_GIT_BASH_PATH=C:\\Program Files\\Git\\bin\\bash.exe"
 )
 _GIT_EXEC_PATH_TIMEOUT_SECONDS = 5
 
@@ -89,7 +89,7 @@ async def _find_git_bash_path() -> KaosPath:
     """Locate ``bash.exe`` from Git for Windows.
 
     Resolution order:
-      1. ``KIMI_CLI_GIT_BASH_PATH`` environment variable (validated to exist).
+      1. ``AKSESA_CLI_GIT_BASH_PATH`` environment variable (validated to exist).
       2. ``where.exe git`` -> ``<gitDir>/../bin/bash.exe``.
       3. ``git --exec-path`` -> Git for Windows install root -> ``bin\\bash.exe``.
       4. Common install locations (``C:\\Program Files\\Git\\bin\\bash.exe``).
@@ -97,13 +97,13 @@ async def _find_git_bash_path() -> KaosPath:
     Raises:
         GitBashNotFoundError: if no candidate path resolves to an existing file.
     """
-    override = os.environ.get("KIMI_CLI_GIT_BASH_PATH")
+    override = os.environ.get("AKSESA_CLI_GIT_BASH_PATH")
     if override:
         candidate = KaosPath(override)
         if await candidate.is_file():
             return candidate
         raise GitBashNotFoundError(
-            f"KIMI_CLI_GIT_BASH_PATH points to {override} but no file exists there.\n\n"
+            f"AKSESA_CLI_GIT_BASH_PATH points to {override} but no file exists there.\n\n"
             + _GIT_BASH_INSTALL_HINT
         )
 

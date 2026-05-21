@@ -405,8 +405,8 @@ class Shell:
                 self._cancel_background_tasks()
 
         # Start auto-update background task if not disabled
-        if get_env_bool("KIMI_CLI_NO_AUTO_UPDATE"):
-            logger.info("Auto-update disabled by KIMI_CLI_NO_AUTO_UPDATE environment variable")
+        if get_env_bool("AKSESA_CLI_NO_AUTO_UPDATE"):
+            logger.info("Auto-update disabled by AKSESA_CLI_NO_AUTO_UPDATE environment variable")
         else:
             self._start_background_task(self._auto_update())
 
@@ -1512,7 +1512,7 @@ def _print_welcome_info(name: str, info_items: list[WelcomeInfoItem]) -> None:
         from aksesa_cli.ui.shell.update import SKIPPED_VERSION_FILE
         from aksesa_cli.utils.envvar import get_env_bool
 
-        if not get_env_bool("KIMI_CLI_NO_AUTO_UPDATE"):
+        if not get_env_bool("AKSESA_CLI_NO_AUTO_UPDATE"):
             try:
                 latest_version = LATEST_VERSION_FILE.read_text(encoding="utf-8").strip()
             except OSError:

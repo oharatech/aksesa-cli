@@ -329,7 +329,7 @@ class KimiCLI:
         from aksesa_cli.telemetry import attach_sink, set_context
         from aksesa_cli.telemetry import disable as disable_telemetry
 
-        telemetry_disabled = not config.telemetry or get_env_bool("KIMI_DISABLE_TELEMETRY")
+        telemetry_disabled = not config.telemetry or get_env_bool("AKSESA_DISABLE_TELEMETRY")
         if telemetry_disabled:
             disable_telemetry()
         else:
@@ -700,19 +700,19 @@ class KimiCLI:
             ),
             WelcomeInfoItem(name="Session", value=self._runtime.session.id),
         ]
-        if base_url := self._env_overrides.get("KIMI_BASE_URL"):
+        if base_url := self._env_overrides.get("AKSESA_BASE_URL"):
             welcome_info.append(
                 WelcomeInfoItem(
                     name="API URL",
-                    value=f"{base_url} (from KIMI_BASE_URL)",
+                    value=f"{base_url} (from AKSESA_BASE_URL)",
                     level=WelcomeInfoItem.Level.WARN,
                 )
             )
-        if self._env_overrides.get("KIMI_API_KEY"):
+        if self._env_overrides.get("AKSESA_API_KEY"):
             welcome_info.append(
                 WelcomeInfoItem(
                     name="API Key",
-                    value="****** (from KIMI_API_KEY)",
+                    value="****** (from AKSESA_API_KEY)",
                     level=WelcomeInfoItem.Level.WARN,
                 )
             )
@@ -724,11 +724,11 @@ class KimiCLI:
                     level=WelcomeInfoItem.Level.WARN,
                 )
             )
-        elif "KIMI_MODEL_NAME" in self._env_overrides:
+        elif "AKSESA_MODEL_NAME" in self._env_overrides:
             welcome_info.append(
                 WelcomeInfoItem(
                     name="Model",
-                    value=f"{self._soul.model_name} (from KIMI_MODEL_NAME)",
+                    value=f"{self._soul.model_name} (from AKSESA_MODEL_NAME)",
                     level=WelcomeInfoItem.Level.WARN,
                 )
             )
@@ -745,9 +745,11 @@ class KimiCLI:
             )
             model_name = self._soul.model_name
             if model_name not in (
-                "kimi-for-coding",
-                "kimi-code",
-            ) and not model_name.startswith("kimi-k2"):
+                "auto",
+                "fast-code",
+                "smart-code",
+                "cheap-chat",
+            ):
                 welcome_info.append(
                     WelcomeInfoItem(
                         name="Tip",
