@@ -12,9 +12,11 @@ Tests verify:
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import cast
 
+import pytest
 from kaos.path import KaosPath
 
 
@@ -107,7 +109,7 @@ def _start_wire(config_path: Path, work_dir: Path) -> subprocess.Popen[str]:
     cmd = [
         "uv",
         "run",
-        "kimi",
+        "aksesa",
         "--wire",
         "--yolo",
         "--config-file",
@@ -381,6 +383,7 @@ command = "echo stop_ok"
         process.wait()
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Hook script uses POSIX bash")
 async def test_pre_tool_use_hook_blocks_tool(temp_work_dir: KaosPath, tmp_path: Path) -> None:
     """PreToolUse hook that exits 2 blocks the tool and feeds reason back to agent."""
     # Create a blocking hook script
@@ -411,7 +414,7 @@ async def test_pre_tool_use_hook_blocks_tool(temp_work_dir: KaosPath, tmp_path: 
 [[hooks]]
 event = "PreToolUse"
 matcher = "Shell"
-command = "{block_script}"
+command = "{block_script.as_posix()}"
 timeout = 5
 """,
     )

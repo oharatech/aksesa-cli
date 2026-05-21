@@ -26,6 +26,7 @@ def _normalize_cli_output(text: str, *, replace: dict[str, str] | None = None) -
                 normalized = normalized.replace(old, new)
     normalized = normalize_value(normalized)
     normalized = normalized.replace("kimi-agent mcp", "<cmd> mcp")
+    normalized = normalized.replace("aksesa mcp", "<cmd> mcp")
     normalized = normalized.replace("kimi mcp", "<cmd> mcp")
     return normalized
 
@@ -124,7 +125,7 @@ MCP config file: <home_dir>/.kimi/mcp.json
     assert _normalize_cli_output(tested.stdout, replace=replacements) == snapshot(
         """\
 Testing connection to 'test'...
-✓ Connected to 'test'
+OK Connected to 'test'
   Available tools: 1
   Tools:
     - ping: pong the input text

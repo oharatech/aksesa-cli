@@ -42,7 +42,7 @@ def test_initialize_handshake(tmp_path) -> None:
             {
                 "result": {
                     "protocol_version": "1.10",
-                    "server": {"name": "Kimi Code CLI", "version": "<VERSION>"},
+                    "server": {"name": "Aksesa CLI", "version": "<VERSION>"},
                     "slash_commands": [
                         {
                             "name": "init",
@@ -87,7 +87,7 @@ def test_initialize_handshake(tmp_path) -> None:
                         },
                         {
                             "name": "skill:kimi-cli-help",
-                            "description": "Answer Kimi Code CLI usage, configuration, and troubleshooting questions. Use when user asks about Kimi Code CLI installation, setup, configuration, slash commands, keyboard shortcuts, MCP integration, providers, environment variables, how something works internally, or any questions about Kimi Code CLI itself.",
+                            "description": "Answer Aksesa CLI usage, configuration, and troubleshooting questions. Use when user asks about Aksesa CLI installation, setup, configuration, slash commands, keyboard shortcuts, MCP integration, providers, environment variables, how something works internally, or any questions about Aksesa CLI itself.",
                             "aliases": [],
                         },
                         {
@@ -152,7 +152,7 @@ def test_initialize_external_tool_conflict(tmp_path) -> None:
             {
                 "result": {
                     "protocol_version": "1.10",
-                    "server": {"name": "Kimi Code CLI", "version": "<VERSION>"},
+                    "server": {"name": "Aksesa CLI", "version": "<VERSION>"},
                     "slash_commands": [
                         {
                             "name": "init",
@@ -197,7 +197,7 @@ def test_initialize_external_tool_conflict(tmp_path) -> None:
                         },
                         {
                             "name": "skill:kimi-cli-help",
-                            "description": "Answer Kimi Code CLI usage, configuration, and troubleshooting questions. Use when user asks about Kimi Code CLI installation, setup, configuration, slash commands, keyboard shortcuts, MCP integration, providers, environment variables, how something works internally, or any questions about Kimi Code CLI itself.",
+                            "description": "Answer Aksesa CLI usage, configuration, and troubleshooting questions. Use when user asks about Aksesa CLI installation, setup, configuration, slash commands, keyboard shortcuts, MCP integration, providers, environment variables, how something works internally, or any questions about Aksesa CLI itself.",
                             "aliases": [],
                         },
                         {

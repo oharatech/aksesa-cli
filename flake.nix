@@ -1,5 +1,5 @@
 {
-  description = "kimi-cli flake";
+  description = "aksesa-cli flake";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixpkgs-unstable";
     systems.url = "github:nix-systems/default";
@@ -47,7 +47,7 @@
       packages = forAllSystems (
         { pkgs, ... }:
         let
-          kimi-cli =
+          aksesa-cli =
             let
               inherit (pkgs)
                 lib
@@ -85,10 +85,10 @@
                   extraBuildOverlay
                 ]
               );
-              kimiCliPackage = pythonSet.mkVirtualEnv "kimi-cli-virtual-env-${pyproject.project.version}" workspace.deps.default;
+              aksesaCliPackage = pythonSet.mkVirtualEnv "aksesa-cli-virtual-env-${pyproject.project.version}" workspace.deps.default;
             in
             stdenvNoCC.mkDerivation ({
-              pname = "kimi-cli";
+              pname = "aksesa-cli";
               version = pyproject.project.version;
 
               dontUnpack = true;
@@ -100,9 +100,9 @@
                 runHook preInstall
 
                 mkdir -p $out/bin
-                makeWrapper ${kimiCliPackage}/bin/kimi $out/bin/kimi \
+                makeWrapper ${aksesaCliPackage}/bin/aksesa $out/bin/aksesa \
                   --prefix PATH : ${lib.makeBinPath [ ripgrep ]} \
-                  --set KIMI_CLI_NO_AUTO_UPDATE "1"
+                  --set AKSESA_CLI_NO_AUTO_UPDATE "1"
 
                 runHook postInstall
               '';
@@ -114,19 +114,19 @@
               doInstallCheck = true;
 
               meta = {
-                description = "Kimi Code CLI is a new CLI agent that can help you with your software development tasks and terminal operations";
+                description = "Aksesa CLI is a Python CLI agent for software engineering workflows";
                 license = lib.licenses.asl20;
                 sourceProvenance = with lib.sourceTypes; [ fromSource ];
                 maintainers = with lib.maintainers; [
                   xiaoxiangmoe
                 ];
-                mainProgram = "kimi";
+                mainProgram = "aksesa";
               };
             });
         in
         {
-          inherit kimi-cli;
-          default = kimi-cli;
+          inherit aksesa-cli;
+          default = aksesa-cli;
         }
       );
       formatter = forAllSystems ({ pkgs, ... }: pkgs.nixfmt-tree);

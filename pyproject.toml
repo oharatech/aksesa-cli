@@ -102,6 +102,7 @@ include = [
 ]
 strict = ["src/aksesa_cli/**/*.py"]
 
+
 [tool.ty.environment]
 python-version = "3.14"
 
