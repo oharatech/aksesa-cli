@@ -509,7 +509,9 @@ jobs:
           cache-dependency-path: web/package-lock.json
 
       - name: Build distributions
-        run: make build-aksesa-cli
+        run: |
+          make build-aksesa-cli
+          rm -f dist/kimi_code*
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
