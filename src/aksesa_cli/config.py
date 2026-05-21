@@ -269,8 +269,7 @@ class Config(BaseModel):
     telemetry: bool = Field(
         default=True,
         description=(
-            "Enable anonymous telemetry to help improve aksesa-cli."
-            " Set to false to opt out."
+            "Enable anonymous telemetry to help improve aksesa-cli. Set to false to opt out."
         ),
     )
 
