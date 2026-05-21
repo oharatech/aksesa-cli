@@ -61,7 +61,7 @@ source-exclude = ["examples/**/*", "tests/**/*", "src/aksesa_cli/deps/**/*"]
 members = [
     "packages/kosong",
     "packages/kaos",
-    "packages/kimi-code",
+    "packages/aksesa",
     "sdks/kimi-sdk",
 ]
 

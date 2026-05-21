@@ -869,12 +869,12 @@ class TestSessionStarted:
         track_session_started_once(
             ui_mode="wire",
             resumed=False,
-            client_name="kimi-code-for-vs-code",
+            client_name="aksesa-for-vs-code",
             client_version="1.90.0",
         )
 
         event = _collect_events()[-1]
-        assert event["properties"]["client_name"] == "kimi-code-for-vs-code"
+        assert event["properties"]["client_name"] == "aksesa-for-vs-code"
         assert event["properties"]["client_version"] == "1.90.0"
 
 

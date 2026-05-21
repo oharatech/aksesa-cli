@@ -447,7 +447,7 @@ async def feedback(app: Shell, args: str):
 
     import aiohttp
 
-    from aksesa_cli.auth import KIMI_CODE_PLATFORM_ID
+    from aksesa_cli.auth import AKSESA_PLATFORM_ID
     from aksesa_cli.auth.platforms import get_platform_by_id, managed_provider_key
     from aksesa_cli.constant import VERSION
     from aksesa_cli.ui.shell.oauth import current_model_key
@@ -464,12 +464,12 @@ async def feedback(app: Shell, args: str):
         _fallback_to_issues()
         return
 
-    kimi_platform = get_platform_by_id(KIMI_CODE_PLATFORM_ID)
-    if kimi_platform is None:
+    aksesa_platform = get_platform_by_id(AKSESA_PLATFORM_ID)
+    if aksesa_platform is None:
         _fallback_to_issues()
         return
 
-    provider = soul.runtime.config.providers.get(managed_provider_key(KIMI_CODE_PLATFORM_ID))
+    provider = soul.runtime.config.providers.get(managed_provider_key(AKSESA_PLATFORM_ID))
     if provider is None or provider.oauth is None:
         _fallback_to_issues()
         return
@@ -489,7 +489,7 @@ async def feedback(app: Shell, args: str):
         return
 
     api_key = soul.runtime.oauth.resolve_api_key(provider.api_key, provider.oauth)
-    feedback_url = f"{kimi_platform.base_url.rstrip('/')}/feedback"
+    feedback_url = f"{aksesa_platform.base_url.rstrip('/')}/feedback"
 
     payload = {
         "session_id": soul.runtime.session.id,

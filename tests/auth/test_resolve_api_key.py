@@ -28,13 +28,13 @@ def _make_config(*, with_oauth: bool = True, api_key: str = "") -> Config:
         type="kimi",
         base_url="https://api.test/v1",
         api_key=SecretStr(api_key),
-        oauth=OAuthRef(storage="file", key="oauth/kimi-code") if with_oauth else None,
+        oauth=OAuthRef(storage="file", key="oauth/aksesa") if with_oauth else None,
     )
-    model = LLMModel(provider="managed:kimi-code", model="test-model", max_context_size=100_000)
+    model = LLMModel(provider="managed:aksesa", model="test-model", max_context_size=100_000)
     return Config(
-        default_model="managed:kimi-code/test-model",
-        providers={"managed:kimi-code": provider},
-        models={"managed:kimi-code/test-model": model},
+        default_model="managed:aksesa/test-model",
+        providers={"managed:aksesa": provider},
+        models={"managed:aksesa/test-model": model},
         services=Services(),
     )
 
@@ -56,7 +56,7 @@ def test_resolve_api_key_returns_oauth_token_when_available():
     )
     oauth = _make_oauth_manager(config, initial_token=token)
 
-    ref = OAuthRef(storage="file", key="oauth/kimi-code")
+    ref = OAuthRef(storage="file", key="oauth/aksesa")
     result = oauth.resolve_api_key(SecretStr(""), ref)
 
     assert result == "oauth-access-123"
@@ -65,7 +65,7 @@ def test_resolve_api_key_returns_oauth_token_when_available():
 def test_resolve_api_key_falls_back_to_api_key_when_no_token():
     config = _make_config(with_oauth=True)
     oauth = _make_oauth_manager(config, initial_token=None)
-    ref = OAuthRef(storage="file", key="oauth/kimi-code")
+    ref = OAuthRef(storage="file", key="oauth/aksesa")
 
     with patch("aksesa_cli.auth.oauth.load_tokens", return_value=None):
         result = oauth.resolve_api_key(SecretStr("fallback-key"), ref)
@@ -94,7 +94,7 @@ def test_resolve_api_key_falls_back_when_token_has_empty_access_token():
         token_type="Bearer",
     )
     oauth = _make_oauth_manager(config, initial_token=empty_token)
-    ref = OAuthRef(storage="file", key="oauth/kimi-code")
+    ref = OAuthRef(storage="file", key="oauth/aksesa")
 
     with patch("aksesa_cli.auth.oauth.load_tokens", return_value=empty_token):
         result = oauth.resolve_api_key(SecretStr("fallback"), ref)
@@ -107,7 +107,7 @@ async def test_resolve_api_key_falls_back_after_rejected_refresh_token(tmp_path,
     """After a confirmed refresh 401, keep the file but stop preferring the
     same persisted OAuth token over a configured static API key.
     """
-    monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path))
+    monkeypatch.setenv("AKSESA_SHARE_DIR", str(tmp_path))
     config = _make_config(with_oauth=True, api_key="fallback-key")
     token = OAuthToken(
         access_token="oauth-access-123",
@@ -117,10 +117,10 @@ async def test_resolve_api_key_falls_back_after_rejected_refresh_token(tmp_path,
         token_type="Bearer",
         expires_in=100,
     )
-    _save_to_file("oauth/kimi-code", token)
+    _save_to_file("oauth/aksesa", token)
 
     oauth = OAuthManager(config)
-    ref = OAuthRef(storage="file", key="oauth/kimi-code")
+    ref = OAuthRef(storage="file", key="oauth/aksesa")
 
     with (
         patch(
@@ -132,7 +132,7 @@ async def test_resolve_api_key_falls_back_after_rejected_refresh_token(tmp_path,
     ):
         await oauth.ensure_fresh(force=True)
 
-    result = oauth.resolve_api_key(config.providers["managed:kimi-code"].api_key, ref)
+    result = oauth.resolve_api_key(config.providers["managed:aksesa"].api_key, ref)
     assert result == "fallback-key"
 
 
@@ -161,7 +161,7 @@ async def test_ensure_fresh_without_runtime_caches_token():
         await oauth.ensure_fresh()  # no runtime
 
     # After ensure_fresh, resolve_api_key should return the cached token
-    ref = OAuthRef(storage="file", key="oauth/kimi-code")
+    ref = OAuthRef(storage="file", key="oauth/aksesa")
     result = oauth.resolve_api_key(SecretStr(""), ref)
     assert result == "fresh-access-token"
 
@@ -200,7 +200,7 @@ async def test_ensure_fresh_without_runtime_refreshes_expired_token():
     ):
         await oauth.ensure_fresh()  # no runtime — should still refresh
 
-    ref = OAuthRef(storage="file", key="oauth/kimi-code")
+    ref = OAuthRef(storage="file", key="oauth/aksesa")
     result = oauth.resolve_api_key(SecretStr(""), ref)
     assert result == "refreshed-access"
 

@@ -14,16 +14,14 @@ pytestmark = pytest.mark.asyncio
 @pytest.mark.parametrize(
     "argv, expected_command, expected_terminal_args",
     [
-        # Standard entry-point: kimi acp
-        (["/usr/local/bin/kimi", "acp"], "/usr/local/bin/kimi", ["login"]),
-        # kimi-code entry-point (JetBrains scenario)
-        (["/usr/local/bin/kimi-code", "acp"], "/usr/local/bin/kimi-code", ["login"]),
-        # kimi-cli entry-point
-        (["/usr/local/bin/kimi-cli", "acp"], "/usr/local/bin/kimi-cli", ["login"]),
+        # Standard entry-point: aksesa acp
+        (["/usr/local/bin/aksesa", "acp"], "/usr/local/bin/aksesa", ["login"]),
+        # aksesa-cli entry-point
+        (["/usr/local/bin/aksesa-cli", "acp"], "/usr/local/bin/aksesa-cli", ["login"]),
         # Arbitrary wrapper script
         (["/opt/wrapper.sh", "acp"], "/opt/wrapper.sh", ["login"]),
     ],
-    ids=["kimi", "kimi-code", "kimi-cli", "wrapper-script"],
+    ids=["aksesa", "aksesa-cli", "wrapper-script"],
 )
 async def test_initialize_argv_handling(
     argv: list[str],

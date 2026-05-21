@@ -6,7 +6,7 @@ from typing import Any, NamedTuple, cast
 import aiohttp
 from pydantic import BaseModel
 
-from aksesa_cli.auth import AKSESA_PLATFORM_ID, KIMI_CODE_PLATFORM_ID
+from aksesa_cli.auth import AKSESA_PLATFORM_ID
 from aksesa_cli.config import Config, LLMModel, load_config, save_config
 from aksesa_cli.llm import ModelCapability
 from aksesa_cli.utils.aiohttp import new_client_session
@@ -50,12 +50,6 @@ class Platform(NamedTuple):
     allowed_prefixes: list[str] | None = None
 
 
-def _kimi_code_base_url() -> str:
-    if base_url := os.getenv("KIMI_CODE_BASE_URL"):
-        return base_url
-    return "https://api.kimi.com/coding/v1"
-
-
 def _aksesa_base_url() -> str:
     if base_url := os.getenv("AKSESA_BASE_URL"):
         return base_url
@@ -63,13 +57,6 @@ def _aksesa_base_url() -> str:
 
 
 PLATFORMS: list[Platform] = [
-    Platform(
-        id=KIMI_CODE_PLATFORM_ID,
-        name="Kimi Code",
-        base_url=_kimi_code_base_url(),
-        search_url=f"{_kimi_code_base_url()}/search",
-        fetch_url=f"{_kimi_code_base_url()}/fetch",
-    ),
     Platform(
         id=AKSESA_PLATFORM_ID,
         name="Aksesa",

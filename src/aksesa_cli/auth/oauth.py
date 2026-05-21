@@ -21,7 +21,7 @@ import aiohttp
 import keyring
 from pydantic import SecretStr
 
-from aksesa_cli.auth import AKSESA_PLATFORM_ID, KIMI_CODE_PLATFORM_ID
+from aksesa_cli.auth import AKSESA_PLATFORM_ID
 from aksesa_cli.auth.platforms import (
     ModelInfo,
     get_platform_by_id,
@@ -48,13 +48,10 @@ if TYPE_CHECKING:
     from aksesa_cli.soul.agent import Runtime
 
 
-KIMI_CODE_CLIENT_ID = "17e5f671-d194-4dfb-9706-5516cb48c098"
-KIMI_CODE_OAUTH_KEY = "oauth/kimi-code"
 AKSESA_CLIENT_ID = "aksesa-cli-v1"
 AKSESA_OAUTH_KEY = "oauth/aksesa"
-DEFAULT_OAUTH_HOST = "https://auth.kimi.com"
 AKSESA_OAUTH_HOST = "https://ai.codecircle.space"
-KEYRING_SERVICE = "kimi-code"
+KEYRING_SERVICE = "aksesa"
 REFRESH_INTERVAL_SECONDS = 60
 MIN_REFRESH_THRESHOLD_SECONDS = 300
 REFRESH_THRESHOLD_RATIO = 0.5
@@ -182,16 +179,12 @@ class DeviceAuthorization:
     interval: int
 
 
-def _oauth_host(platform_id: str = KIMI_CODE_PLATFORM_ID) -> str:
-    if platform_id == AKSESA_PLATFORM_ID:
-        return os.getenv("AKSESA_OAUTH_HOST") or AKSESA_OAUTH_HOST
-    return os.getenv("KIMI_CODE_OAUTH_HOST") or os.getenv("KIMI_OAUTH_HOST") or DEFAULT_OAUTH_HOST
+def _oauth_host(platform_id: str = AKSESA_PLATFORM_ID) -> str:
+    return os.getenv("AKSESA_OAUTH_HOST") or AKSESA_OAUTH_HOST
 
 
-def _client_id(platform_id: str = KIMI_CODE_PLATFORM_ID) -> str:
-    if platform_id == AKSESA_PLATFORM_ID:
-        return AKSESA_CLIENT_ID
-    return KIMI_CODE_CLIENT_ID
+def _client_id(platform_id: str = AKSESA_PLATFORM_ID) -> str:
+    return AKSESA_CLIENT_ID
 
 
 def _device_id_path() -> Path:
@@ -464,7 +457,7 @@ def delete_tokens(ref: OAuthRef) -> None:
 
 
 async def request_device_authorization(
-    platform_id: str = KIMI_CODE_PLATFORM_ID,
+    platform_id: str = AKSESA_PLATFORM_ID,
 ) -> DeviceAuthorization:
     async with (
         new_client_session() as session,
@@ -525,7 +518,7 @@ async def request_device_authorization(
 
 
 async def _request_device_token(
-    auth: DeviceAuthorization, platform_id: str = KIMI_CODE_PLATFORM_ID
+    auth: DeviceAuthorization, platform_id: str = AKSESA_PLATFORM_ID
 ) -> tuple[int, dict[str, Any]]:
     try:
         async with (
@@ -559,7 +552,7 @@ async def _request_device_token(
 
 async def refresh_token(
     refresh_token: str,
-    platform_id: str = KIMI_CODE_PLATFORM_ID,
+    platform_id: str = AKSESA_PLATFORM_ID,
     *,
     max_retries: int = 3,
 ) -> OAuthToken:
@@ -784,19 +777,6 @@ async def _login_platform(
     return
 
 
-async def login_kimi_code(
-    config: Config, *, open_browser: bool = True
-) -> AsyncIterator[OAuthEvent]:
-    async for event in _login_platform(
-        config,
-        platform_id=KIMI_CODE_PLATFORM_ID,
-        provider_type="kimi",
-        oauth_key=KIMI_CODE_OAUTH_KEY,
-        open_browser=open_browser,
-    ):
-        yield event
-
-
 async def login_aksesa(config: Config, *, open_browser: bool = True) -> AsyncIterator[OAuthEvent]:
     async for event in _login_platform(
         config,
@@ -845,15 +825,6 @@ async def _logout_platform(
     save_config(config)
     yield OAuthEvent("success", "Logged out successfully.")
     return
-
-
-async def logout_kimi_code(config: Config) -> AsyncIterator[OAuthEvent]:
-    async for event in _logout_platform(
-        config,
-        platform_id=KIMI_CODE_PLATFORM_ID,
-        oauth_key=KIMI_CODE_OAUTH_KEY,
-    ):
-        yield event
 
 
 async def logout_aksesa(config: Config) -> AsyncIterator[OAuthEvent]:
@@ -992,9 +963,6 @@ class OAuthManager:
                 return service.oauth
         return None
 
-    def _kimi_code_ref(self) -> OAuthRef | None:
-        return self._find_ref_by_key(KIMI_CODE_OAUTH_KEY)
-
     def _saas_ai_ref(self) -> OAuthRef | None:
         return self._find_ref_by_key(AKSESA_OAUTH_KEY)
 
@@ -1070,9 +1038,7 @@ class OAuthManager:
                 await refresh_task
 
     def _platform_id_from_ref(self, ref: OAuthRef) -> str:
-        if ref.key == AKSESA_OAUTH_KEY:
-            return AKSESA_PLATFORM_ID
-        return KIMI_CODE_PLATFORM_ID
+        return AKSESA_PLATFORM_ID
 
     async def _refresh_tokens(
         self,

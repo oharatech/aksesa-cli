@@ -40,7 +40,7 @@ def _make_token(
         access_token=access,
         refresh_token=refresh,
         expires_at=time.time() + expires_in,
-        scope="kimi-code",
+        scope="aksesa",
         token_type="Bearer",
         expires_in=expires_in,
     )
@@ -51,13 +51,13 @@ def _make_config() -> Config:
         type="kimi",
         base_url="https://api.test/v1",
         api_key=SecretStr(""),
-        oauth=OAuthRef(storage="file", key="oauth/kimi-code"),
+        oauth=OAuthRef(storage="file", key="oauth/aksesa"),
     )
-    model = LLMModel(provider="managed:kimi-code", model="test-model", max_context_size=100_000)
+    model = LLMModel(provider="managed:aksesa", model="test-model", max_context_size=100_000)
     return Config(
-        default_model="managed:kimi-code/test-model",
-        providers={"managed:kimi-code": provider},
-        models={"managed:kimi-code/test-model": model},
+        default_model="managed:aksesa/test-model",
+        providers={"managed:aksesa": provider},
+        models={"managed:aksesa/test-model": model},
         services=Services(),
     )
 
@@ -80,7 +80,7 @@ async def test_refresh_token_retries_on_network_error():
             "access_token": "new-access",
             "refresh_token": "new-refresh",
             "expires_in": 900,
-            "scope": "kimi-code",
+            "scope": "aksesa",
             "token_type": "Bearer",
         }
     )
@@ -184,7 +184,7 @@ async def test_refresh_token_retries_on_5xx():
             "access_token": "recovered",
             "refresh_token": "new-refresh",
             "expires_in": 900,
-            "scope": "kimi-code",
+            "scope": "aksesa",
             "token_type": "Bearer",
         }
     )
@@ -394,9 +394,9 @@ async def test_unauthorized_must_not_delete_credentials_file(tmp_path, monkeypat
     the file between the check and the deletion, and wiping it would cause
     permanent auth loss even though a valid token is sitting on disk.
     """
-    monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path))
-    _save_to_file("oauth/kimi-code", _make_token(refresh="R1", expires_in=100))
-    cred = tmp_path / "credentials" / "kimi-code.json"
+    monkeypatch.setenv("AKSESA_SHARE_DIR", str(tmp_path))
+    _save_to_file("oauth/aksesa", _make_token(refresh="R1", expires_in=100))
+    cred = tmp_path / "credentials" / "aksesa.json"
     assert cred.exists()
 
     manager = OAuthManager(_make_config())
@@ -415,7 +415,7 @@ async def test_unauthorized_must_not_delete_credentials_file(tmp_path, monkeypat
         "credentials file was deleted on a single 401 — a concurrent "
         "manager may have just rotated the token in the TOCTOU window"
     )
-    assert manager._access_tokens.get("oauth/kimi-code") is None, (
+    assert manager._access_tokens.get("oauth/aksesa") is None, (
         "in-memory access token cache must still be cleared after 401"
     )
 
@@ -427,9 +427,9 @@ async def test_unauthorized_non_force_must_not_delete_credentials_file(tmp_path,
     still must not delete the credentials file on a single 401 — a concurrent
     manager may have just rotated the token.
     """
-    monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path))
-    _save_to_file("oauth/kimi-code", _make_token(refresh="R1", expires_in=100))
-    cred = tmp_path / "credentials" / "kimi-code.json"
+    monkeypatch.setenv("AKSESA_SHARE_DIR", str(tmp_path))
+    _save_to_file("oauth/aksesa", _make_token(refresh="R1", expires_in=100))
+    cred = tmp_path / "credentials" / "aksesa.json"
     assert cred.exists()
 
     manager = OAuthManager(_make_config())
@@ -448,7 +448,7 @@ async def test_unauthorized_non_force_must_not_delete_credentials_file(tmp_path,
         "credentials file was deleted on a background-refresh 401 — "
         "same TOCTOU risk as the force=True case"
     )
-    assert manager._access_tokens.get("oauth/kimi-code") is None, (
+    assert manager._access_tokens.get("oauth/aksesa") is None, (
         "in-memory access token cache must still be cleared after 401"
     )
 
@@ -458,8 +458,8 @@ async def test_rejected_refresh_token_cooldown_skips_background_retry(tmp_path, 
     """After a confirmed refresh 401, the same persisted refresh token should
     not be retried again immediately by the background-refresh path.
     """
-    monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path))
-    _save_to_file("oauth/kimi-code", _make_token(refresh="R1", expires_in=100))
+    monkeypatch.setenv("AKSESA_SHARE_DIR", str(tmp_path))
+    _save_to_file("oauth/aksesa", _make_token(refresh="R1", expires_in=100))
 
     manager = OAuthManager(_make_config())
     refresh = AsyncMock(side_effect=OAuthUnauthorized("invalid_grant"))
@@ -485,8 +485,8 @@ async def test_rejected_tombstone_cleared_when_concurrent_instance_rotated(tmp_p
     after we marked the old one rejected, the tombstone must clear and the
     new token must be picked up without going to the network.
     """
-    monkeypatch.setenv("KIMI_SHARE_DIR", str(tmp_path))
-    _save_to_file("oauth/kimi-code", _make_token(refresh="R1", expires_in=100))
+    monkeypatch.setenv("AKSESA_SHARE_DIR", str(tmp_path))
+    _save_to_file("oauth/aksesa", _make_token(refresh="R1", expires_in=100))
 
     manager = OAuthManager(_make_config())
     refresh = AsyncMock(side_effect=OAuthUnauthorized("invalid_grant"))
@@ -499,11 +499,11 @@ async def test_rejected_tombstone_cleared_when_concurrent_instance_rotated(tmp_p
     ):
         await manager.ensure_fresh(force=True)
 
-    assert _REJECTED_REFRESH_TOKENS.get("oauth/kimi-code") is not None
+    assert _REJECTED_REFRESH_TOKENS.get("oauth/aksesa") is not None
 
     # Step 2: simulate a concurrent instance writing a fresh token (R2) to disk
     _save_to_file(
-        "oauth/kimi-code",
+        "oauth/aksesa",
         _make_token(access="new-access", refresh="R2", expires_in=900),
     )
 
@@ -516,10 +516,10 @@ async def test_rejected_tombstone_cleared_when_concurrent_instance_rotated(tmp_p
         await manager.ensure_fresh(force=False)
 
     assert refresh.await_count == 1, "should not retry refresh after rotation recovered"
-    assert _REJECTED_REFRESH_TOKENS.get("oauth/kimi-code") is None, (
+    assert _REJECTED_REFRESH_TOKENS.get("oauth/aksesa") is None, (
         "tombstone must be cleared once the on-disk refresh_token no longer matches"
     )
-    assert manager._access_tokens.get("oauth/kimi-code") == "new-access", (
+    assert manager._access_tokens.get("oauth/aksesa") == "new-access", (
         "the new access token from R2 should be cached"
     )
 

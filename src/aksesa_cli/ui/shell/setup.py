@@ -8,7 +8,6 @@ from prompt_toolkit.shortcuts.choice_input import ChoiceInput
 from pydantic import SecretStr
 
 from aksesa_cli import logger
-from aksesa_cli.auth import KIMI_CODE_PLATFORM_ID
 from aksesa_cli.auth.platforms import (
     PLATFORMS,
     ModelInfo,
@@ -86,11 +85,6 @@ async def _setup_platform(platform: Platform) -> _SetupResult | None:
     except aiohttp.ClientResponseError as e:
         logger.error("Failed to get models: {error}", error=e)
         console.print(f"[red]Failed to get models: {e.message}[/red]")
-        if e.status == 401 and platform.id != KIMI_CODE_PLATFORM_ID:
-            console.print(
-                "[yellow]Hint: If your API key was obtained from Kimi Code, "
-                'please select "Kimi Code" instead.[/yellow]'
-            )
         return None
     except Exception as e:
         logger.error("Failed to get models: {error}", error=e)

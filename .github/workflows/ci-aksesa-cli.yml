@@ -227,19 +227,19 @@ jobs:
       - name: Check dependency versions
         if: steps.version.outputs.bump == 'true'
         run: |
-          python scripts/check_kimi_dependency_versions.py \
+          python scripts/check_aksesa_dependency_versions.py \
             --root-pyproject pyproject.toml \
             --kosong-pyproject packages/kosong/pyproject.toml \
             --pykaos-pyproject packages/kaos/pyproject.toml
 
-      - name: Check kimi-code version alignment
+      - name: Check aksesa version alignment
         if: steps.version.outputs.bump == 'true'
         run: |
           python scripts/check_version_tag.py \
-            --pyproject packages/kimi-code/pyproject.toml \
+            --pyproject packages/aksesa/pyproject.toml \
             --expected-version "${{ steps.version.outputs.head_version }}"
 
-      - name: Check kimi-code dependency pin
+      - name: Check aksesa dependency pin
         if: steps.version.outputs.bump == 'true'
         shell: python
         run: |
@@ -247,12 +247,12 @@ jobs:
           from pathlib import Path
 
           expected_version = "${{ steps.version.outputs.head_version }}"
-          data = tomllib.loads(Path("packages/kimi-code/pyproject.toml").read_text())
+          data = tomllib.loads(Path("packages/aksesa/pyproject.toml").read_text())
           deps = data["project"]["dependencies"]
           expected = f"aksesa-cli=={expected_version}"
           if expected not in deps:
               raise SystemExit(
-                  "kimi-code must depend on "
+                  "aksesa must depend on "
                   f"{expected}, got: {deps}"
               )
 

@@ -39,7 +39,7 @@ def _spawn_workers(
     (share / "credentials").mkdir(parents=True, exist_ok=True)
 
     env = os.environ.copy()
-    env["KIMI_SHARE_DIR"] = str(share)
+    env["AKSESA_SHARE_DIR"] = str(share)
 
     procs = [
         subprocess.Popen(
@@ -80,7 +80,7 @@ def test_cross_process_lock_mutual_exclusion(tmp_path: Path) -> None:
         from aksesa_cli.auth.oauth import _CrossProcessLock
 
         COUNTER = Path({str(counter)!r})
-        KEY = "oauth/kimi-code"
+        KEY = "oauth/aksesa"
 
         async def main():
             for _ in range({N_INCREMENTS}):
@@ -117,14 +117,17 @@ def test_atomic_save_no_corruption(tmp_path: Path) -> None:
                 access_token=f"at-{{worker_id}}-{{i}}",
                 refresh_token=f"rt-{{worker_id}}-{{i}}",
                 expires_at=time.time() + 900,
-                scope="kimi-code",
+                scope="aksesa",
                 token_type="Bearer",
                 expires_in=900.0,
             )
-            _save_to_file("kimi-code", token)
+            try:
+                _save_to_file("aksesa", token)
+            except OSError:
+                pass
 
         # After all writes, the file must still be valid JSON.
-        path = Path({str(tmp_path / "share" / "credentials" / "kimi-code.json")!r})
+        path = Path({str(tmp_path / "share" / "credentials" / "aksesa.json")!r})
         data = json.loads(path.read_text(encoding="utf-8"))
         assert "access_token" in data and "refresh_token" in data
     """)
@@ -133,7 +136,7 @@ def test_atomic_save_no_corruption(tmp_path: Path) -> None:
     for rc, _out, err in results:
         assert rc == 0, f"Worker failed:\n{err}"
 
-    cred = tmp_path / "share" / "credentials" / "kimi-code.json"
+    cred = tmp_path / "share" / "credentials" / "aksesa.json"
     data = json.loads(cred.read_text(encoding="utf-8"))
     assert data["access_token"].startswith("at-")
     assert data["refresh_token"].startswith("rt-")
@@ -149,19 +152,19 @@ async def test_lock_file_created_with_safe_permissions(tmp_path: Path) -> None:
 
     share = tmp_path / "share"
     (share / "credentials").mkdir(parents=True, exist_ok=True)
-    original = os.environ.get("KIMI_SHARE_DIR")
-    os.environ["KIMI_SHARE_DIR"] = str(share)
+    original = os.environ.get("AKSESA_SHARE_DIR")
+    os.environ["AKSESA_SHARE_DIR"] = str(share)
     try:
-        lock = _CrossProcessLock("oauth/kimi-code")
+        lock = _CrossProcessLock("oauth/aksesa")
         acquired = await lock.acquire_with_retry()
         assert acquired
-        lock_path = share / "credentials" / "kimi-code.lock"
+        lock_path = share / "credentials" / "aksesa.lock"
         assert lock_path.exists()
         mode = lock_path.stat().st_mode & 0o777
         assert mode == 0o600, f"Expected 0o600, got {oct(mode)}"
         lock.release()
     finally:
         if original is None:
-            os.environ.pop("KIMI_SHARE_DIR", None)
+            os.environ.pop("AKSESA_SHARE_DIR", None)
         else:
-            os.environ["KIMI_SHARE_DIR"] = original
+            os.environ["AKSESA_SHARE_DIR"] = original

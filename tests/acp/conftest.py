@@ -144,7 +144,7 @@ def acp_share_dir(tmp_path: Path) -> Path:
 
     credentials_dir = share_dir / "credentials"
     credentials_dir.mkdir(parents=True, exist_ok=True)
-    (credentials_dir / "kimi-code.json").write_text(
+    (credentials_dir / "aksesa.json").write_text(
         json.dumps(
             {
                 "access_token": "test-token-for-ci",
@@ -168,7 +168,7 @@ async def acp_client(
     test_client = ACPTestClient()
     env = {
         **os.environ,
-        "KIMI_SHARE_DIR": str(acp_share_dir),
+        "AKSESA_SHARE_DIR": str(acp_share_dir),
     }
 
     async with acp.spawn_agent_process(

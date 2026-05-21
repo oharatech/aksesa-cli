@@ -85,12 +85,12 @@ def test_parse_plugin_json_with_runtime(tmp_path: Path):
         {
             "name": "installed-plugin",
             "version": "1.0.0",
-            "runtime": {"host": "kimi-code", "host_version": "1.22.0"},
+            "runtime": {"host": "aksesa", "host_version": "1.22.0"},
         },
     )
     spec = parse_plugin_json(plugin_dir / "plugin.json")
     assert spec.runtime is not None
-    assert spec.runtime.host == "kimi-code"
+    assert spec.runtime.host == "aksesa"
     assert spec.runtime.host_version == "1.22.0"
 
 
@@ -196,11 +196,11 @@ def test_write_runtime(tmp_path: Path):
         },
     )
 
-    runtime = PluginRuntime(host="kimi-code", host_version="1.22.0")
+    runtime = PluginRuntime(host="aksesa", host_version="1.22.0")
     write_runtime(plugin_dir, runtime)
 
     data = json.loads((plugin_dir / "plugin.json").read_text())
-    assert data["runtime"]["host"] == "kimi-code"
+    assert data["runtime"]["host"] == "aksesa"
     assert data["runtime"]["host_version"] == "1.22.0"
     assert data["name"] == "p"  # original fields preserved
 

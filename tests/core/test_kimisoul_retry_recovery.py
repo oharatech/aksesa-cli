@@ -453,15 +453,15 @@ async def test_step_connection_recovery_then_401_triggers_oauth_refresh(
         type="kimi",
         base_url="https://api.test/v1",
         api_key=SecretStr(""),
-        oauth=OAuthRef(storage="file", key="oauth/kimi-code"),
+        oauth=OAuthRef(storage="file", key="oauth/aksesa"),
     )
     oauth_model = LLMModel(
-        provider="managed:kimi-code",
+        provider="managed:aksesa",
         model="kimi-for-coding",
         max_context_size=100_000,
     )
     runtime.config.providers[oauth_model.provider] = oauth_provider
-    runtime.config.models["kimi-code/kimi-for-coding"] = oauth_model
+    runtime.config.models["aksesa/kimi-for-coding"] = oauth_model
 
     provider = ConnectionThen401ThenSuccessProvider()
     llm = LLM(

@@ -225,7 +225,7 @@ async def _run_kimi_print_json(
     prompt: str,
 ) -> tuple[int, str, str]:
     env = os.environ.copy()
-    env["KIMI_SHARE_DIR"] = str(share_dir)
+    env["AKSESA_SHARE_DIR"] = str(share_dir)
     env["KIMI_DISABLE_TELEMETRY"] = "1"
     env["COLUMNS"] = "120"
     env["LINES"] = "40"

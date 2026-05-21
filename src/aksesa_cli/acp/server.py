@@ -17,7 +17,7 @@ from aksesa_cli.acp.tools import replace_tools
 from aksesa_cli.acp.types import ACPContentBlock, MCPServer
 from aksesa_cli.acp.version import ACPVersionSpec, negotiate_version
 from aksesa_cli.app import KimiCLI
-from aksesa_cli.auth.oauth import KIMI_CODE_OAUTH_KEY, load_tokens
+from aksesa_cli.auth.oauth import AKSESA_OAUTH_KEY, load_tokens
 from aksesa_cli.config import LLMModel, OAuthRef, load_config, save_config
 from aksesa_cli.constant import NAME, VERSION
 from aksesa_cli.llm import create_llm, derive_model_capabilities
@@ -77,9 +77,9 @@ class ACPServer:
         self._auth_methods = [
             acp.schema.AuthMethod(
                 id="login",
-                name="Login with Kimi account",
+                name="Login with Aksesa account",
                 description=(
-                    "Run `kimi login` command in the terminal, "
+                    "Run `aksesa login` command in the terminal, "
                     "then follow the instructions to finish login."
                 ),
                 # Store auth data in field_meta for building AUTH_REQUIRED error
@@ -87,7 +87,7 @@ class ACPServer:
                     "terminal-auth": {
                         "command": command,
                         "args": terminal_args,
-                        "label": "Kimi Code Login",
+                        "label": "Aksesa Login",
                         "env": {},
                         "type": "terminal",
                     }
@@ -115,7 +115,7 @@ class ACPServer:
     @staticmethod
     def _check_token_usable() -> str | None:
         """Return ``None`` if the persisted OAuth token is usable, else a reason string."""
-        ref = OAuthRef(storage="file", key=KIMI_CODE_OAUTH_KEY)
+        ref = OAuthRef(storage="file", key=AKSESA_OAUTH_KEY)
         token = load_tokens(ref)
 
         if token is None or not token.access_token:
@@ -126,7 +126,7 @@ class ACPServer:
         return None
 
     def _check_auth(self) -> None:
-        """Check if Kimi Code authentication is complete. Raise AUTH_REQUIRED if not."""
+        """Check if Aksesa authentication is complete. Raise AUTH_REQUIRED if not."""
         reason = self._check_token_usable()
         if reason:
             auth_methods_data: list[dict[str, Any]] = []
@@ -365,7 +365,7 @@ class ACPServer:
 
         config.default_model = model_id_conv.model_key
         config.default_thinking = model_id_conv.thinking
-        assert config.is_from_default_location, "`kimi acp` must use the default config location"
+        assert config.is_from_default_location, "`aksesa acp` must use the default config location"
         config_for_save = load_config()
         config_for_save.default_model = model_id_conv.model_key
         config_for_save.default_thinking = model_id_conv.thinking

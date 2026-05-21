@@ -909,9 +909,9 @@ def login(
         help="Emit OAuth events as JSON lines.",
     ),
     platform: str = typer.Option(
-        "kimi-code",
+        "aksesa",
         "--platform",
-        help="Platform to log in to (kimi-code or aksesa).",
+        help="Platform to log in to (aksesa).",
     ),
 ) -> None:
     """Login to your account."""
@@ -920,12 +920,12 @@ def login(
     from rich.console import Console
     from rich.status import Status
 
-    from aksesa_cli.auth.oauth import login_aksesa, login_kimi_code
+    from aksesa_cli.auth.oauth import login_aksesa
     from aksesa_cli.config import load_config
 
     async def _run() -> bool:
         config = load_config()
-        login_fn = login_aksesa if platform == "aksesa" else login_kimi_code
+        login_fn = login_aksesa
 
         if json:
             ok = True
@@ -976,9 +976,9 @@ def logout(
         help="Emit OAuth events as JSON lines.",
     ),
     platform: str = typer.Option(
-        "kimi-code",
+        "aksesa",
         "--platform",
-        help="Platform to log out from (kimi-code or aksesa).",
+        help="Platform to log out from (aksesa).",
     ),
 ) -> None:
     """Logout from your account."""
@@ -986,12 +986,12 @@ def logout(
 
     from rich.console import Console
 
-    from aksesa_cli.auth.oauth import logout_aksesa, logout_kimi_code
+    from aksesa_cli.auth.oauth import logout_aksesa
     from aksesa_cli.config import load_config
 
     async def _run() -> bool:
         config = load_config()
-        logout_fn = logout_aksesa if platform == "aksesa" else logout_kimi_code
+        logout_fn = logout_aksesa
 
         ok = True
         if json:
@@ -1051,7 +1051,7 @@ def background_task_worker(
     from aksesa_cli.background import run_background_task_worker
     from aksesa_cli.utils.proctitle import set_process_title
 
-    set_process_title("kimi-code-bg-worker")
+    set_process_title("aksesa-bg-worker")
 
     from aksesa_cli.app import enable_logging
 
@@ -1074,7 +1074,7 @@ def web_worker(session_id: str) -> None:
 
     from aksesa_cli.utils.proctitle import set_process_title
 
-    set_process_title("kimi-code-worker")
+    set_process_title("aksesa-worker")
 
     from aksesa_cli.app import enable_logging
     from aksesa_cli.web.runner.worker import run_worker

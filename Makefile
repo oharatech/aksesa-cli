@@ -113,13 +113,13 @@ test-kimi-sdk: ## Run kimi-sdk tests.
 	@uv run --project sdks/kimi-sdk --directory sdks/kimi-sdk pytest tests -vv
 .PHONY: build build-aksesa-cli build-kosong build-pykaos build-kimi-sdk build-bin build-bin-onedir
 build: build-web build-vis build-aksesa-cli build-kosong build-pykaos build-kimi-sdk ## Build Python packages for release.
-build-aksesa-cli: build-web build-vis ## Build the aksesa-cli and kimi-code sdists and wheels.
+build-aksesa-cli: build-web build-vis ## Build the aksesa-cli and aksesa sdists and wheels.
 	@echo "==> Injecting build SHA"
 	@uv run scripts/inject_build_sha.py
 	@echo "==> Building aksesa-cli distributions"
 	@uv build --package aksesa-cli --no-sources --out-dir dist
-	@echo "==> Building kimi-code distributions"
-	@uv build --package kimi-code --no-sources --out-dir dist
+	@echo "==> Building aksesa distributions"
+	@uv build --package aksesa --no-sources --out-dir dist
 build-kosong: ## Build the kosong sdist and wheel.
 	@echo "==> Building kosong distributions"
 	@uv build --package kosong --no-sources --out-dir dist/kosong

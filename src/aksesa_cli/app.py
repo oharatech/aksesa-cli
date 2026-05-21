@@ -15,7 +15,7 @@ from kaos.path import KaosPath
 from pydantic import SecretStr
 
 from aksesa_cli.agentspec import DEFAULT_AGENT_FILE
-from aksesa_cli.auth.oauth import KIMI_CODE_OAUTH_KEY, OAuthManager, get_device_id
+from aksesa_cli.auth.oauth import AKSESA_OAUTH_KEY, OAuthManager, get_device_id
 from aksesa_cli.background.models import is_terminal_status
 from aksesa_cli.cli import InputFormat, OutputFormat
 from aksesa_cli.config import Config, LLMModel, LLMProvider, load_config
@@ -339,7 +339,7 @@ class KimiCLI:
             from aksesa_cli.telemetry.transport import AsyncTransport
 
             def _get_token() -> str | None:
-                return oauth.get_cached_access_token(KIMI_CODE_OAUTH_KEY)
+                return oauth.get_cached_access_token(AKSESA_OAUTH_KEY)
 
             transport = AsyncTransport(device_id=device_id, get_access_token=_get_token)
             sink = EventSink(

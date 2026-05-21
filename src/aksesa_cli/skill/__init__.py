@@ -25,9 +25,9 @@ SkillScope = Literal["builtin", "user", "project", "extra"]
 """Where a skill was discovered from.
 
 - ``builtin``: bundled with kimi-cli
-- ``user``: from the user's home (``~/.kimi/skills``, ``~/.agents/skills``, ...)
+- ``user``: from the user's home (``~/.aksesa/skills``, ``~/.agents/skills``, ...)
 - ``project``: from the current project's working directory
-  (``<work_dir>/.kimi/skills``, ``<work_dir>/.agents/skills``, ...)
+  (``<work_dir>/.aksesa/skills``, ``<work_dir>/.agents/skills``, ...)
 - ``extra``: from ``extra_skill_dirs`` config or ``--skills-dir`` override
 """
 
@@ -69,11 +69,10 @@ def _get_user_brand_skills_dir_candidates() -> tuple[KaosPath, ...]:
     Get user-level brand skills directory candidates in priority order.
 
     Brand group:
-    ``~/.aksesa/skills`` > ``~/.kimi/skills`` > ``~/.claude/skills`` > ``~/.codex/skills``
+    ``~/.aksesa/skills`` > ``~/.claude/skills`` > ``~/.codex/skills``
     """
     return (
         KaosPath.home() / ".aksesa" / "skills",
-        KaosPath.home() / ".kimi" / "skills",
         KaosPath.home() / ".claude" / "skills",
         KaosPath.home() / ".codex" / "skills",
     )
@@ -92,11 +91,10 @@ def _get_project_brand_skills_dir_candidates(work_dir: KaosPath) -> tuple[KaosPa
     """
     Get project-level brand skills directory candidates in priority order.
 
-    Brand group: ``.aksesa/skills`` > ``.kimi/skills`` > ``.claude/skills`` > ``.codex/skills``
+    Brand group: ``.aksesa/skills`` > ``.claude/skills`` > ``.codex/skills``
     """
     return (
         work_dir / ".aksesa" / "skills",
-        work_dir / ".kimi" / "skills",
         work_dir / ".claude" / "skills",
         work_dir / ".codex" / "skills",
     )
@@ -128,7 +126,7 @@ async def find_user_skills_dirs(
     The brand group comes first because brand-specific directories have
     higher specificity.  When *merge_brands* is ``False`` (default), only the
     first existing brand directory is used.  When ``True``, all existing brand
-    directories are included (priority order: kimi > claude > codex).
+    directories are included (priority order: aksesa > claude > codex).
     """
     dirs: list[KaosPath] = []
     if merge_brands:
@@ -164,7 +162,7 @@ async def find_project_skills_dirs(
     The brand group comes first because brand-specific directories have
     higher specificity.  When *merge_brands* is ``False`` (default), only the
     first existing brand directory is used.  When ``True``, all existing brand
-    directories are included (priority order: kimi > claude > codex).
+    directories are included (priority order: aksesa > claude > codex).
     """
     from aksesa_cli.utils.path import find_project_root
 

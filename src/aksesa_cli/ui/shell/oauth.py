@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING
 
 from rich.status import Status
 
-from aksesa_cli.auth import AKSESA_PLATFORM_ID, KIMI_CODE_PLATFORM_ID
-from aksesa_cli.auth.oauth import login_aksesa, login_kimi_code, logout_aksesa, logout_kimi_code
+from aksesa_cli.auth import AKSESA_PLATFORM_ID
+from aksesa_cli.auth.oauth import login_aksesa, logout_aksesa
 from aksesa_cli.auth.platforms import is_managed_provider_key, parse_managed_provider_key
 from aksesa_cli.cli import Reload
 from aksesa_cli.config import save_config
@@ -17,35 +17,6 @@ from aksesa_cli.ui.shell.slash import ensure_kimi_soul, registry
 
 if TYPE_CHECKING:
     from aksesa_cli.ui.shell import Shell
-
-
-async def _login_kimi_code(soul: KimiSoul) -> bool:
-    status: Status | None = None
-    ok = True
-    try:
-        async for event in login_kimi_code(soul.runtime.config):
-            if event.type == "waiting":
-                if status is None:
-                    status = console.status("[cyan]Waiting for user authorization...[/cyan]")
-                    status.start()
-                continue
-            if status is not None:
-                status.stop()
-                status = None
-            match event.type:
-                case "error":
-                    style = "red"
-                case "success":
-                    style = "green"
-                case _:
-                    style = None
-            console.print(event.message, markup=False, style=style)
-            if event.type == "error":
-                ok = False
-    finally:
-        if status is not None:
-            status.stop()
-    return ok
 
 
 async def _login_aksesa(soul: KimiSoul) -> bool:
@@ -96,9 +67,7 @@ async def login(app: Shell, args: str) -> None:
     platform = await select_platform()
     if platform is None:
         return
-    if platform.id == KIMI_CODE_PLATFORM_ID:
-        ok = await _login_kimi_code(soul)
-    elif platform.id == AKSESA_PLATFORM_ID:
+    if platform.id == AKSESA_PLATFORM_ID:
         ok = await _login_aksesa(soul)
     else:
         ok = await setup_platform(platform)
@@ -142,22 +111,7 @@ async def logout(app: Shell, args: str) -> None:
         console.print("[yellow]Current provider is not managed; nothing to logout.[/yellow]")
         return
 
-    if platform_id == KIMI_CODE_PLATFORM_ID:
-        ok = True
-        async for event in logout_kimi_code(config):
-            match event.type:
-                case "error":
-                    style = "red"
-                case "success":
-                    style = "green"
-                case _:
-                    style = None
-            console.print(event.message, markup=False, style=style)
-            if event.type == "error":
-                ok = False
-        if not ok:
-            return
-    elif platform_id == AKSESA_PLATFORM_ID:
+    if platform_id == AKSESA_PLATFORM_ID:
         ok = True
         async for event in logout_aksesa(config):
             match event.type:

@@ -13,7 +13,7 @@ from rich.progress_bar import ProgressBar
 from rich.table import Table
 from rich.text import Text
 
-from aksesa_cli.auth import KIMI_CODE_PLATFORM_ID
+from aksesa_cli.auth import AKSESA_PLATFORM_ID
 from aksesa_cli.auth.platforms import get_platform_by_id, parse_managed_provider_key
 from aksesa_cli.config import LLMModel
 from aksesa_cli.soul.kimisoul import KimiSoul
@@ -49,7 +49,7 @@ async def usage(app: Shell, args: str):
 
     usage_url = _usage_url(app.soul.runtime.llm.model_config)
     if usage_url is None:
-        console.print("[yellow]Usage is available on Kimi Code platform only.[/yellow]")
+        console.print("[yellow]Usage is available on Aksesa platform only.[/yellow]")
         return
 
     with console.status("[cyan]Fetching usage...[/cyan]"):
@@ -61,7 +61,7 @@ async def usage(app: Shell, args: str):
             if e.status == 401:
                 message = "Authorization failed. Please check your API key."
             elif e.status == 404:
-                message = "Usage endpoint not available. Try Kimi for Coding."
+                message = "Usage endpoint not available."
             console.print(f"[red]{message}[/red]")
             return
         except TimeoutError:
@@ -86,7 +86,7 @@ def _usage_url(model: LLMModel | None) -> str | None:
     if platform_id is None:
         return None
     platform = get_platform_by_id(platform_id)
-    if platform is None or platform.id != KIMI_CODE_PLATFORM_ID:
+    if platform is None or platform.id != AKSESA_PLATFORM_ID:
         return None
     base_url = platform.base_url.rstrip("/")
     return f"{base_url}/usages"

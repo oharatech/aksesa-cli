@@ -29,15 +29,15 @@ jobs:
             --pyproject pyproject.toml \
             --expected-version "${GITHUB_REF_NAME}"
 
-      - name: Check kimi-code version tag
+      - name: Check aksesa version tag
         run: |
           python scripts/check_version_tag.py \
-            --pyproject packages/kimi-code/pyproject.toml \
+            --pyproject packages/aksesa/pyproject.toml \
             --expected-version "${GITHUB_REF_NAME}"
 
       - name: Check dependency versions
         run: |
-          python scripts/check_kimi_dependency_versions.py \
+          python scripts/check_aksesa_dependency_versions.py \
             --root-pyproject pyproject.toml \
             --kosong-pyproject packages/kosong/pyproject.toml \
             --pykaos-pyproject packages/kaos/pyproject.toml
@@ -511,7 +511,6 @@ jobs:
       - name: Build distributions
         run: |
           make build-aksesa-cli
-          rm -f dist/kimi_code*
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

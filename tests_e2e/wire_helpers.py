@@ -48,7 +48,7 @@ def make_env(home_dir: Path) -> dict[str, str]:
     env = os.environ.copy()
     env["HOME"] = str(home_dir)
     env["USERPROFILE"] = str(home_dir)
-    env["KIMI_SHARE_DIR"] = str(share_dir(home_dir))
+    env["AKSESA_SHARE_DIR"] = str(share_dir(home_dir))
     return env
 
 

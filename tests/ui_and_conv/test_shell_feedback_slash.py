@@ -37,12 +37,12 @@ def _make_shell_app(runtime: Runtime, tmp_path: Path) -> SimpleNamespace:
 
 
 def _setup_feedback_provider(runtime: Runtime) -> None:
-    """Add a managed:kimi-code provider with OAuth to the runtime config."""
-    runtime.config.providers["managed:kimi-code"] = LLMProvider(
+    """Add a managed:aksesa provider with OAuth to the runtime config."""
+    runtime.config.providers["managed:aksesa"] = LLMProvider(
         type="kimi",
         base_url="https://api.kimi.com/coding/v1",
         api_key=SecretStr("test-api-key"),
-        oauth=OAuthRef(storage="file", key="oauth/kimi-code"),
+        oauth=OAuthRef(storage="file", key="oauth/aksesa"),
         custom_headers={"x-canary-kfc": "always"},
     )
 
@@ -121,7 +121,7 @@ class TestFeedbackGuards:
     async def test_fallback_when_no_provider(
         self, runtime: Runtime, tmp_path: Path, monkeypatch
     ) -> None:
-        """When managed:kimi-code provider is missing, should fallback."""
+        """When managed:aksesa provider is missing, should fallback."""
         app = _make_shell_app(runtime, tmp_path)
 
         open_mock = Mock(return_value=True)
@@ -137,7 +137,7 @@ class TestFeedbackGuards:
         self, runtime: Runtime, tmp_path: Path, monkeypatch
     ) -> None:
         """When provider exists but has no oauth, should fallback."""
-        runtime.config.providers["managed:kimi-code"] = LLMProvider(
+        runtime.config.providers["managed:aksesa"] = LLMProvider(
             type="kimi",
             base_url="https://api.kimi.com/coding/v1",
             api_key=SecretStr("test-api-key"),

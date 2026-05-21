@@ -89,12 +89,12 @@ async def load_agents_md(work_dir: KaosPath) -> str | None:
 
     For each directory on the path, the following candidates are checked in order:
 
-    1. ``.kimi/AGENTS.md``  — project-local kimi config (highest priority)
+    1. ``.aksesa/AGENTS.md``  — project-local aksesa config (highest priority)
     2. ``AGENTS.md``        — standard location
     3. ``agents.md``        — lowercase variant (mutually exclusive with 2)
 
-    Within a single directory, ``.kimi/AGENTS.md`` and ``AGENTS.md``/``agents.md``
-    are **both** loaded (with ``.kimi/`` first), but ``AGENTS.md`` and ``agents.md``
+    Within a single directory, ``.aksesa/AGENTS.md`` and ``AGENTS.md``/``agents.md``
+    are **both** loaded (with ``.aksesa/`` first), but ``AGENTS.md`` and ``agents.md``
     are mutually exclusive (uppercase wins).
 
     All discovered files are concatenated root→leaf, separated by ``\\n\\n``, with
@@ -108,17 +108,14 @@ async def load_agents_md(work_dir: KaosPath) -> str | None:
     # Phase 1: collect all candidate files (root → leaf order)
     discovered: list[tuple[KaosPath, str]] = []  # (path, content)
     for d in dirs:
-        # .aksesa/AGENTS.md and .kimi/AGENTS.md are checked independently (can coexist)
+        # .aksesa/AGENTS.md is checked independently (can coexist with root candidates)
         aksesa_path = d / ".aksesa" / "AGENTS.md"
-        kimi_path = d / ".kimi" / "AGENTS.md"
         # AGENTS.md and agents.md are mutually exclusive (uppercase wins)
         root_candidates = [d / "AGENTS.md", d / "agents.md"]
 
         candidates: list[KaosPath] = []
         if await aksesa_path.is_file():
             candidates.append(aksesa_path)
-        if await kimi_path.is_file():
-            candidates.append(kimi_path)
         for rc in root_candidates:
             if await rc.is_file():
                 candidates.append(rc)

@@ -109,7 +109,7 @@ def _resolve_source(target: str) -> tuple[Path, Path | None]:
     if parsed.scheme in ("http", "https") and parsed.path.lower().endswith(".zip"):
         import httpx
 
-        tmp = Path(tempfile.mkdtemp(prefix="kimi-plugin-"))
+        tmp = Path(tempfile.mkdtemp(prefix="aksesa-plugin-"))
         zip_path = tmp / "_download.zip"
         typer.echo(f"Downloading {target}...")
         try:
@@ -136,7 +136,7 @@ def _resolve_source(target: str) -> tuple[Path, Path | None]:
 
         clone_url, subpath, branch = _parse_git_url(target)
 
-        tmp = Path(tempfile.mkdtemp(prefix="kimi-plugin-"))
+        tmp = Path(tempfile.mkdtemp(prefix="aksesa-plugin-"))
         typer.echo(f"Cloning {clone_url}...")
         clone_cmd = ["git", "clone", "--depth", "1"]
         if branch:
@@ -195,7 +195,7 @@ def _resolve_source(target: str) -> tuple[Path, Path | None]:
             typer.echo(
                 f"Error: No plugin.json at repository root. "
                 f"Available plugins:\n{names}\n"
-                f"Use: kimi plugin install <url>/<plugin-name>",
+                f"Use: aksesa plugin install <url>/<plugin-name>",
                 err=True,
             )
         else:
@@ -210,7 +210,7 @@ def _resolve_source(target: str) -> tuple[Path, Path | None]:
 
     # Zip file
     if p.is_file() and p.suffix == ".zip":
-        tmp = Path(tempfile.mkdtemp(prefix="kimi-plugin-"))
+        tmp = Path(tempfile.mkdtemp(prefix="aksesa-plugin-"))
         typer.echo(f"Extracting {p.name}...")
         return _extract_zip_to_plugin(p, tmp)
 
@@ -261,7 +261,7 @@ def install_cmd(
             typer.echo(
                 "Warning: No LLM provider configured. "
                 "Plugins requiring API key injection will fail. "
-                "Run 'kimi login' or configure a provider first.",
+                "Run 'aksesa login' or configure a provider first.",
                 err=True,
             )
 
@@ -269,7 +269,7 @@ def install_cmd(
             source=source,
             plugins_dir=get_plugins_dir(),
             host_values=host_values,
-            host_name="kimi-code",
+            host_name="aksesa",
             host_version=VERSION,
         )
     except PluginError as exc:

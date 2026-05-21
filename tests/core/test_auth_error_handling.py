@@ -258,7 +258,7 @@ _OAUTH_PROVIDER_CONFIG = LLMProvider(
     type="kimi",
     base_url="https://api.test/v1",
     api_key=SecretStr(""),
-    oauth=OAuthRef(storage="file", key="oauth/kimi-code"),
+    oauth=OAuthRef(storage="file", key="oauth/aksesa"),
 )
 
 _API_KEY_PROVIDER_CONFIG = LLMProvider(
